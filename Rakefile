@@ -6,9 +6,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |g|
     g.name = 'postalcoder'
-    g.summary = 'A library for getting latitude and longitude information ' \
-      'from postal codes using the GMaps geocoding API with a persisted ' \
-      'local cache courtesy of TokyoCabinet'
+    g.summary = 'A library for geocoding postal codes via the Google Maps ' \
+      'Geocoding API with a persisted local cache using TokyoCabinet'
     g.email = 'heycarsten@gmail.com'
     g.homepage = 'http://github.com/heycarsten/postalcoder'
     g.authors = ['Carsten Nielsen']
