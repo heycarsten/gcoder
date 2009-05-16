@@ -7,12 +7,12 @@ module PostalCoder
       :tdb_file => nil,
       :accepted_formats => [:ca_postal_code, :us_zip_code] }
 
-    def self.update(overrides)
-      @default_settings.update(overrides)
+    def self.merge(overrides)
+      @default_settings.merge(overrides)
     end
 
-    def self.update!(hsh)
-      @default_settings.update!(hsh)
+    def self.update(hsh)
+      @default_settings.update(hsh)
     end
 
     def self.[](key)
