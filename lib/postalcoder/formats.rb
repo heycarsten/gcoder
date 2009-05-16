@@ -1,12 +1,25 @@
 module PostalCoder
   module Formats
 
-    MAP = {
-      :ca_postal_code => :CAPostalCode,
-      :us_zip_code => :USZipCode }
+    SYMBOLS_TO_NAMES_MAP = {
+      :ca_postal_code => 'CAPostalCode',
+      :us_zip_code => 'USZipCode' }
+
+    # Eww gross! -- CKN
+    def self.symbol_to_class(symbol)
+      unless symbol.is_a?(Symbol)
+        raise ArgumentError, "expected Symbol, not: #{symbol.class}"
+      end
+      class_name = SYMBOLS_TO_NAMES_MAP.fetch(symbol) do |sym|
+        raise Errors::UnknownFormatSymbolError, 'The format symbol ' \
+        "#{sym.inspect} is not one of the reconized symbols, which are: " \
+        "#{SYMBOLS_TO_NAMES_MAP.keys.map { |s| s.inspect }.join(', ')}."
+      end
+      eval "::PostalCoder::Formats::#{class_name}"
+    end
 
 
-    module PostalCodeable
+    class AbstractPostalCode
 
       def initialize(raw_value)
         @value = cleanup(raw_value)
@@ -34,9 +47,7 @@ module PostalCoder
     end
 
 
-    class CAPostalCode
-
-      include PostalCodeable
+    class CAPostalCode < AbstractPostalCode
 
       def cleanup(raw_value)
         unless raw_value.is_a?(String)
@@ -52,9 +63,7 @@ module PostalCoder
     end
 
 
-    class USZipCode
-
-      include PostalCodeable
+    class USZipCode < AbstractPostalCode
 
       def cleanup(raw_value)
         unless raw_value.is_a?(String) || raw_value.is_a?(Integer)
@@ -69,6 +78,7 @@ module PostalCoder
       end
 
     end
+
 
   end
 end

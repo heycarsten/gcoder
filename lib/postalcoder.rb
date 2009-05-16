@@ -10,13 +10,12 @@ require 'postalcoder/config'
 require 'postalcoder/formats'
 require 'postalcoder/geocoding_api'
 require 'postalcoder/persistence'
+require 'postalcoder/resolver'
 
 
 module PostalCoder
 
-
   module Errors
-
     class Error < StandardError; end
     class MalformedPostalCodeError < Error; end
     class BlankQueryError < Error; end
@@ -24,12 +23,11 @@ module PostalCoder
     class NoAPIKeyError < Error; end
     class NoDatabaseFileError < Error; end
     class InvalidStorageValueError < Error; end
-
+    class UnknownFormatSymbolError < Error; end
   end
 
 
   module ProxyMethods
-
     def PostalCoder.config=(hsh)
       Config.update!(hsh)
     end
@@ -37,8 +35,6 @@ module PostalCoder
     def PostalCoder.connect(options = {})
       DB.new(tdb_file)
     end
-
   end
-
 
 end
