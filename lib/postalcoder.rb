@@ -13,6 +13,21 @@ require 'postalcoder/persistence'
 
 
 module PostalCoder
+
+
+  module Errors
+
+    class Error < StandardError; end
+    class MalformedPostalCodeError < Error; end
+    class BlankQueryError < Error; end
+    class QueryTimeoutError < Error; end
+    class NoAPIKeyError < Error; end
+    class NoDatabaseFileError < Error; end
+    class InvalidStorageValueError < Error; end
+
+  end
+
+
   module ProxyMethods
 
     def PostalCoder.config=(hsh)
@@ -24,4 +39,6 @@ module PostalCoder
     end
 
   end
+
+
 end

@@ -1,10 +1,6 @@
 module PostalCoder
   module Persistence
 
-    class Error < StandardError; end
-    class NoDatabaseFileError < Error; end
-    class InvalidStorageValueError < Error; end
-
 
     module Cacheable
 
@@ -56,8 +52,8 @@ module PostalCoder
 
       def prepare_hash_for_storage(hsh)
         unless hsh.keys.all? { |k| k.is_a?(Symbol) || k.is_a?(String) }
-          raise InvalidStorageValueError, 'Storage value keys must all be ' \
-          'Strings or Symbols'
+          raise Errors::InvalidStorageValueError, 'Storage value keys must ' \
+          'all be Strings or Symbols'
         end
         unless value.values.all? { |v| v.is_a?(String) || v.is_a?(Numeric) ||
         v.is_a?(Symbol) }
@@ -81,8 +77,8 @@ module PostalCoder
 
       def filepath=(value)
         if '' == value.to_s
-          raise NoDatabaseFileError, 'No Tokyo Cabinet TDB file is specified ' \
-          'in the configuration'
+          raise Errors::NoDatabaseFileError, 'No Tokyo Cabinet TDB file is ' \
+          'specified in the configuration'
         end
         @filepath = (('.tdb' == File.extname(value)) ? value : "#{value}.tdb")
       end

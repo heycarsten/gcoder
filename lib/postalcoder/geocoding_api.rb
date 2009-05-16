@@ -9,11 +9,6 @@ module PostalCoder
       :sensor => 'false',
       :key => 'google_maps_api_key' }
 
-    class Error < StandardError; end
-    class BlankQueryError < Error; end
-    class QueryTimeoutError < Error; end
-    class NoAPIKeyError < Error; end
-
 
     class Query
 
@@ -33,8 +28,8 @@ module PostalCoder
           open(to_uri).read
         end
       rescue Timeout::TimeoutError
-        raise QueryTimeoutError, "The query timed out at #{Config[:timeout]} " \
-          'second(s)'
+        raise Errors::QueryTimeoutError, 'The query timed out at ' \
+        "#{Config[:timeout]} second(s)"
       end
 
       def to_hash
@@ -62,9 +57,9 @@ module PostalCoder
           raise BlankQueryError, 'You must specifiy a query to resolve.'
         end
         unless Config[:gmaps_api_key]
-          raise NoAPIKeyError, 'You must provide a Google Maps API key in ' \
-            'your configuration! Go to http://code.google.com/apis/maps/si' \
-            'gnup.html to get one.'
+          raise Errors::NoAPIKeyError, 'You must provide a Google Maps API ' \
+          'key in your configuration. Go to http://code.google.com/apis/maps/' \
+          'signup.html to get one.'
         end
       end
 

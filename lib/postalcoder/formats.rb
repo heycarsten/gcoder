@@ -5,9 +5,6 @@ module PostalCoder
       :ca_postal_code => :CAPostalCode,
       :us_zip_code => :USZipCode }
 
-    class Error < StandardError; end
-    class MalformedPostalCodeError < Error; end
-
 
     module PostalCodeable
 
@@ -30,8 +27,8 @@ module PostalCoder
 
       def check_form!
         return true if form_check
-        raise MalformedPostalCodeError, "#{value.inspect} is not a properly " \
-        "formed #{self.class}"
+        raise Errors::MalformedPostalCodeError, "#{value.inspect} is not a " \
+        "properly formed #{self.class}"
       end
 
     end
