@@ -7,11 +7,10 @@ begin
   Jeweler::Tasks.new do |g|
     g.name = 'postalcoder'
     g.summary = 'A library for geocoding postal codes via the Google Maps ' \
-      'Geocoding API with a persisted local cache using TokyoCabinet'
+      'Geocoding API with a persisted cache through Tokyo Tyrant'
     g.email = 'heycarsten@gmail.com'
     g.homepage = 'http://github.com/heycarsten/postalcoder'
     g.authors = ['Carsten Nielsen']
-    g.has_rdoc = false
   end
 rescue LoadError
   puts 'Jeweler not available. Install it with: sudo gem install ' \
@@ -40,6 +39,7 @@ rescue LoadError
       'install spicycode-rcov'
   end
 end
+
 
 task :default => :test
 

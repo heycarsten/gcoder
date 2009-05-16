@@ -1,7 +1,7 @@
-= postalcoder
+= PostalCoder
 
-Description goes here.
+Instead of letting postal codes turn me into a postal coder, I made this gem!
 
 == Copyright
 
-Copyright (c) 2009 Carsten Nielsen. See LICENSE for details.
+Copyright (C) 2009 Carsten Nielsen. See LICENSE for details.
