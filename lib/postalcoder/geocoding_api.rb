@@ -3,41 +3,37 @@ module PostalCoder
 
     BASE_URI = 'http://maps.google.com/maps/geo'
     BASE_PARAMS = {
-      :q => 'postal_code',
+      :q => nil,
       :output => 'json',
       :oe => 'utf8',
       :sensor => 'false',
-      :key => 'google_maps_api_key' }
+      :key => nil }
 
 
     class Query
 
       attr_reader :query
 
-      def self.get(query)
-        new(query).to_hash
+      def self.get(query, options = {})
+        new(query, options).to_hash
       end
 
-      def initialize(query)
-        @query = query
-        verify_integrity!
-      end
-
-      def get
-        Timeout.timeout(Config[:gmaps_api_timeout]) do
-          open(to_uri).read
+      def initialize(query, options = {})
+        unless query.is_a?(String)
+          raise ArgumentError, "query must be a String, not: #{query.class}"
         end
-      rescue Timeout::TimeoutError
-        raise Errors::QueryTimeoutError, 'The query timed out at ' \
-        "#{Config[:timeout]} second(s)"
+        @config = Config.merge(options)
+        @query = query
+        validate_state!
       end
 
       def to_hash
-        JSON.parse(get)
+        return @response if @response
+        parse_json_response(http_get)
       end
 
       def params
-        BASE_PARAMS.merge(:key => Config[:gmaps_api_key], :q => query)
+        BASE_PARAMS.merge(:key => @config[:gmaps_api_key], :q => query)
       end
 
       def to_params
@@ -46,17 +42,42 @@ module PostalCoder
         params.inject([]) { |a, (k, v)| a << "#{k}=#{v}" }.join('&')
       end
 
-      def to_uri
+      def uri
         [BASE_URI, '?', to_params].join
       end
 
       protected
 
-      def validate_query!
-        if '' == query.to_s
-          raise BlankQueryError, 'You must specifiy a query to resolve.'
+      def http_get
+        return @json_response if @json_response
+        Timeout.timeout(@config[:gmaps_api_timeout]) do
+          @json_response = open(uri).read
         end
-        unless Config[:gmaps_api_key]
+      rescue Timeout::TimeoutError
+        raise Errors::QueryTimeoutError, 'The query timed out at ' \
+        "#{@config[:timeout]} second(s)"
+      end
+
+      def parse_json_response(json_response)
+        @response = JSON.parse(json_response)
+        case @response['Status']['code']
+        when 200
+          @response
+        when 400
+          raise Errors::APIMalformedRequestError, 'The GMaps Geo API has ' \
+          'indicated that the request is not formed correctly: ' \
+          "(#{query.inspect})"
+        when 602
+          raise Errors::APIGeocodingError, 'The GMaps Geo API has indicated ' \
+          "that it is not able to geocode the request: (#{query.inspect})"
+        end
+      end
+
+      def validate_state!
+        if '' == query.strip.to_s
+          raise Errors::BlankQueryError, 'You must specifiy a query to resolve.'
+        end
+        unless @config[:gmaps_api_key]
           raise Errors::NoAPIKeyError, 'You must provide a Google Maps API ' \
           'key in your configuration. Go to http://code.google.com/apis/maps/' \
           'signup.html to get one.'

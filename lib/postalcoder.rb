@@ -21,6 +21,8 @@ module PostalCoder
     class BlankQueryError < Error; end
     class QueryTimeoutError < Error; end
     class NoAPIKeyError < Error; end
+    class APIMalformedRequestError < Error; end
+    class APIGeocodingError < Error; end
     class NoDatabaseFileError < Error; end
     class InvalidStorageValueError < Error; end
     class UnknownFormatSymbolError < Error; end
