@@ -21,9 +21,92 @@ class FormatsTest < Test::Unit::TestCase
     end
   end
 
-  context 'AbstractPostalCode' do
-    should 'be tested' do
-      flunk 'TODO: Continue testing!'
+  context 'Creating an instance of AbstractFormat' do
+    should 'throw a not implemented error' do
+      assert_raise NotImplementedError do
+        PostalCoder::Formats::AbstractFormat.new('test')
+      end
+    end
+  end
+
+  context 'Creating an instance of USZipCode' do
+    should 'fail with the wrong type' do
+      assert_raise ArgumentError do
+        PostalCoder::Formats::USZipCode.new(nil)
+      end
+      assert_raise ArgumentError do
+        PostalCoder::Formats::USZipCode.new(20037)
+      end
+    end
+
+    should 'fail with a string of the wrong format' do
+      assert_raise PostalCoder::Errors::MalformedPostalCodeError do
+        PostalCoder::Formats::USZipCode.new('2003')
+      end
+      assert_raise PostalCoder::Errors::MalformedPostalCodeError do
+        PostalCoder::Formats::USZipCode.new('20037-8')
+      end
+      assert_raise PostalCoder::Errors::MalformedPostalCodeError do
+        PostalCoder::Formats::USZipCode.new('')
+      end
+      assert_raise PostalCoder::Errors::MalformedPostalCodeError do
+        PostalCoder::Formats::USZipCode.new('BOOM7-8001')
+      end
+    end
+
+    should 'work with whitespace present' do
+      assert PostalCoder::Formats::USZipCode.new(' 200 37   ')
+    end
+
+    should 'allow ZIP+4 with or without a dash' do
+      assert PostalCoder::Formats::USZipCode.new('20037-8001')
+      assert PostalCoder::Formats::USZipCode.new('20037 8001')
+      assert PostalCoder::Formats::USZipCode.new('200378001')
+    end
+  end
+
+  context 'An instance of USZipCode for ZIP+4 address' do
+    setup do
+      @zip = PostalCoder::Formats::USZipCode.new(' 20037 8001 ')
+    end
+
+    should 'reformat the value to include a dash' do
+      assert_equal '20037-8001', @zip.to_s
+    end
+  end
+
+  context 'Creating an instance of CAPostalCode' do
+    should 'fail with the wrong type' do
+      assert_raise ArgumentError do
+        PostalCoder::Formats::CAPostalCode.new(123456)
+      end
+      assert_raise ArgumentError do
+        PostalCoder::Formats::CAPostalCode.new(nil)
+      end
+    end
+
+    should 'fail with a string of the wrong format' do
+      assert_raise PostalCoder::Errors::MalformedPostalCodeError do
+        PostalCoder::Formats::CAPostalCode.new('M6R')
+      end
+      assert_raise PostalCoder::Errors::MalformedPostalCodeError do
+        PostalCoder::Formats::CAPostalCode.new('')
+      end
+      assert_raise PostalCoder::Errors::MalformedPostalCodeError do
+        PostalCoder::Formats::CAPostalCode.new('M6R2G5A1')
+      end
+      assert_raise PostalCoder::Errors::MalformedPostalCodeError do
+        PostalCoder::Formats::CAPostalCode.new('M6R205')
+      end
+    end
+
+    should 'work with whitespace present' do
+      assert PostalCoder::Formats::CAPostalCode.new('   M6R2G5 ')
+      assert PostalCoder::Formats::CAPostalCode.new('   M6R 2G5 ')
+    end
+
+    should 'upcase any lowercase characters' do
+      assert_equal 'M6R2G5', PostalCoder::Formats::CAPostalCode.new('m6r2g5').to_s
     end
   end
 
