@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Carsten Nielsen"]
-  s.date = %q{2009-05-15}
+  s.date = %q{2009-05-20}
   s.email = %q{heycarsten@gmail.com}
   s.extra_rdoc_files = [
     "README.rdoc"
@@ -21,7 +21,12 @@ Gem::Specification.new do |s|
     "lib/postalcoder/geocoding_api.rb",
     "lib/postalcoder/persistence.rb",
     "lib/postalcoder/resolver.rb",
+    "test/config_test.rb",
+    "test/formats_test.rb",
+    "test/geocoding_api_test.rb",
+    "test/persistence_test.rb",
     "test/postalcoder_test.rb",
+    "test/resolver_test.rb",
     "test/test_helper.rb"
   ]
   s.has_rdoc = true
@@ -31,7 +36,12 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{A library for geocoding postal codes via the Google Maps Geocoding API with a persisted cache through Tokyo Tyrant}
   s.test_files = [
+    "test/config_test.rb",
+    "test/formats_test.rb",
+    "test/geocoding_api_test.rb",
+    "test/persistence_test.rb",
     "test/postalcoder_test.rb",
+    "test/resolver_test.rb",
     "test/test_helper.rb"
   ]
 

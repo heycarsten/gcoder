@@ -8,5 +8,9 @@ module PostalCoder
       end
     end
 
+    def [](postal_code)
+      resolve(postal_code)
+    end
+
   end
 end

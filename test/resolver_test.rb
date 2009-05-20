@@ -22,6 +22,10 @@ class ResolverTest < Test::Unit::TestCase
       assert_instance_of Hash, @db.resolve('M6R2G5')
     end
 
+    should 'allow [] to resolve with auto-instantiation' do
+      assert_instance_of Hash, @db['M6R2G5']
+    end
+
     should 'raise malformed postal code error for a malformed postal code' do
       assert_raise PostalCoder::Errors::MalformedPostalCodeError do
         @db.resolve('m6r212')
