@@ -30,7 +30,8 @@ module PostalCoder
 
     def self.instantiate(postal_code, format_symbol = nil)
       unless postal_code.is_a?(String)
-        raise ArgumentError, "postal_code must be String, not: #{postal_code.class}"
+        raise Errors::MalformedPostalCodeError, 'postal_code must be a ' \
+        "String, not: #{postal_code.class}"
       end
       if format_symbol
         symbol_to_class(format_symbol).new(postal_code)

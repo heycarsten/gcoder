@@ -55,7 +55,7 @@ class FormatsTest < Test::Unit::TestCase
 
   context 'Formats.instantiate' do
     should 'raise an error if passed nil as a postal code' do
-      assert_raise ArgumentError do
+      assert_raise PostalCoder::Errors::MalformedPostalCodeError do
         PostalCoder::Formats.instantiate(nil)
       end
     end
