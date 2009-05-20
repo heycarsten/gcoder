@@ -5,7 +5,6 @@ module PostalCoder
       :ca_postal_code => 'CAPostalCode',
       :us_zip_code => 'USZipCode' }
 
-    # Eww gross! -- CKN
     def self.symbol_to_class(symbol)
       unless symbol.is_a?(Symbol)
         raise ArgumentError, "expected Symbol, not: #{symbol.class}"

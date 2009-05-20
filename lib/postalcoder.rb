@@ -36,7 +36,7 @@ module PostalCoder
     end
 
     def PostalCoder.connect(options = {})
-      DB.new(tdb_file)
+      Resolver.new(options)
     end
   end
 
