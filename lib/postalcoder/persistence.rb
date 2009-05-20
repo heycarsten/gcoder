@@ -5,17 +5,17 @@ module PostalCoder
     module Cacheable
 
       def fetch(key, &block)
-        value = tc_tdb_connection[key]
+        value = data_store[key]
         return value if value
-        tc_tdb_connection[key] = block.call(key)
+        data_store[key] = block.call(key)
       end
 
       private
 
-      def tc_tdb_connection
-        @tc_tdb_connection ||
+      def data_store
+        @data_store ||
           raise(NotImplementedError, "Cacheable expects #{self.class} to " \
-          'implement @tc_tdb_connection')
+          'implement @data_store')
       end
 
     end
@@ -23,68 +23,51 @@ module PostalCoder
 
     class DataStore
 
-      def initialize(tdb_file = nil)
-        if !tdb_file && !Config[:tdb_file]
-          raise ArgumentError, 'tdb_file must be specified when it is not ' \
-          'present in the global configuration'
-        else
-          self.filepath = (tdb_file || Config[:tdb_file])
+      def initialize(options = {})
+        @config = Config.merge(options)
+        unless @config[:tt_host]
+          raise ArgumentError, ':tt_host must be specified when it is not ' \
+          'present in the global configuration.'
         end
-        @writer = Rufus::Tokyo::Table.new(filepath, :mode => write_mode_flags)
-        @reader = Rufus::Tokyo::Table.new(filepath, :mode => 'r')
+        @tyrant = Rufus::Tokyo::Tyrant.new(@config[:tt_host], @config[:tt_port])
+      rescue RuntimeError => boom
+        if boom.message.include?('couldn\'t connect to tyrant')
+          raise Errors::TTUnableToConnectError, 'Unable to connect to the ' \
+          "Tokyo Tyrant server at #{@config[:tt_host]} [#{@config[:tt_port]}]"
+        else
+          raise boom
+        end
       end
 
       def [](key)
-        @reader[key.to_s]
+        storage_get(key)
       end
 
       def []=(key, value)
         unless key.is_a?(String) || key.is_a?(Symbol)
           raise ArgumentError, "key must be String or Symbol, not: #{key.class}"
         end
-        unless value.is_a?(Hash)
+        case value
+        when Hash, Array, String, Numeric, TrueClass, FalseClass, NilClass
+          storage_put(key, value)
+        else
           raise ArgumentError, "value must be Hash, not: #{value.class}"
         end
-        @writer[key.to_s] = prepare_hash_for_storage(value)
       end
 
       protected
 
-      def prepare_hash_for_storage(hsh)
-        unless hsh.keys.all? { |k| k.is_a?(Symbol) || k.is_a?(String) }
-          raise Errors::InvalidStorageValueError, 'Storage value keys must ' \
-          'all be Strings or Symbols'
-        end
-        unless value.values.all? { |v| v.is_a?(String) || v.is_a?(Numeric) ||
-        v.is_a?(Symbol) }
-          raise ArgumentError, 'value hash values must all be Strings, ' \
-          'Numbers or Symbols'
-        end
-        hsh.inject({}) { |h,(k,v)| h.merge(k.to_s => v.to_s) }
+      def storage_get(key)
+        value = tyrant[key.to_s]
+        value ? YAML.load(value) : nil
       end
 
-      def write_mode_flags
-        File.exists?(filepath) ? 'w' : 'wc'
+      def storage_put(key, value)
+        tyrant[key.to_s] = YAML.dump(value)
       end
 
-      def reader
-        @reader
-      end
-
-      def writer
-        @writer
-      end
-
-      def filepath=(value)
-        if '' == value.to_s
-          raise Errors::NoDatabaseFileError, 'No Tokyo Cabinet TDB file is ' \
-          'specified in the configuration'
-        end
-        @filepath = (('.tdb' == File.extname(value)) ? value : "#{value}.tdb")
-      end
-
-      def filepath
-        @filepath
+      def tyrant
+        @tyrant
       end
 
     end

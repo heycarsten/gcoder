@@ -1,6 +1,7 @@
 require 'rubygems'
-require 'rufus/tokyo'
+require 'rufus/tokyo/tyrant'
 require 'json'
+require 'yaml'
 require 'open-uri'
 require 'timeout'
 
@@ -23,7 +24,7 @@ module PostalCoder
     class NoAPIKeyError < Error; end
     class APIMalformedRequestError < Error; end
     class APIGeocodingError < Error; end
-    class NoDatabaseFileError < Error; end
+    class TTUnableToConnectError < Error; end
     class InvalidStorageValueError < Error; end
     class UnknownFormatSymbolError < Error; end
   end

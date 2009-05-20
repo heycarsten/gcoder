@@ -1,10 +1,12 @@
 module PostalCoder
   module Config
 
+    # If :tt_port is 0 then :tt_host should point to a Unix socket.
     @default_settings = {
       :gmaps_api_key => nil,
       :gmaps_api_timeout => 2,
-      :tdb_file => nil,
+      :tt_host => nil,
+      :tt_port => 0,
       :accepted_formats => [:ca_postal_code, :us_zip_code] }
 
     def self.merge(overrides)

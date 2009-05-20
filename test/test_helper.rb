@@ -49,7 +49,10 @@ class Test::Unit::TestCase
     "code": 400,
     "request": "geocode"
   }
-}>
+}>,
+    :test_string => "test\nstring",
+    :test_hash => { 'test' => 'value', 100 => 'one hundred' },
+    :test_array => ['test', 1, 3.1415, true, false, nil]
   }
 
 end
