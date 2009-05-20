@@ -32,7 +32,7 @@ module PostalCoder
 
   module ProxyMethods
     def PostalCoder.config=(hsh)
-      Config.update!(hsh)
+      Config.update(hsh)
     end
 
     def PostalCoder.connect(options = {})
