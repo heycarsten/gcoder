@@ -40,16 +40,18 @@ class GeocodingAPITest < Test::Unit::TestCase
         :gmaps_api_key => 'apikey')
     end
 
-    should 'retun JSON' do
+    should 'return parsed and tidied JSON' do
       @zip.expects(:http_get).returns(PAYLOADS[:json_m6r2g5])
-      assert_equal 'M6R2G5', @zip.to_hash['name']
-      assert_equal 200, @zip.to_hash['Status']['code']
-    end
-
-    should 'return a Hash on #to_ruby' do
-      @zip.expects(:http_get).returns(PAYLOADS[:json_m6r2g5])
-      assert_instance_of Hash, @zip.to_hash
-      assert_equal 'M6R2G5', @zip.to_hash['name']
+      assert_equal 5, @zip.to_hash[:accuracy]
+      assert_equal 'Canada', @zip.to_hash[:country][:name]
+      assert_equal 'CA', @zip.to_hash[:country][:code]
+      assert_equal 'ON', @zip.to_hash[:country][:administrative_area]
+      assert_equal -79.4449720, @zip.to_hash[:point][:latitude]
+      assert_equal 43.6504650, @zip.to_hash[:point][:longitude]
+      assert_equal 43.6536126, @zip.to_hash[:box][:north]
+      assert_equal 43.6473174, @zip.to_hash[:box][:south]
+      assert_equal -79.4418244, @zip.to_hash[:box][:east]
+      assert_equal -79.4481196, @zip.to_hash[:box][:west]
     end
 
     should 'raise an error when API returns malformed request' do

@@ -2,25 +2,6 @@ module PostalCoder
   module Persistence
 
 
-    module Cacheable
-
-      def fetch(key, &block)
-        value = data_store[key]
-        return value if value
-        data_store[key] = block.call(key)
-      end
-
-      private
-
-      def data_store
-        @data_store ||
-          raise(NotImplementedError, "Cacheable expects #{self.class} to " \
-          'implement @data_store')
-      end
-
-    end
-
-
     class DataStore
 
       def initialize(options = {})
@@ -39,6 +20,15 @@ module PostalCoder
         end
       end
 
+      def fetch(key, &block)
+        unless block_given?
+          raise ArgumentError, 'no block was given but one was expected'
+        end
+        value = storage_get(key)
+        return value if value
+        storage_put(key, block.call(key.to_s))
+      end
+
       def [](key)
         storage_get(key)
       end
@@ -47,12 +37,7 @@ module PostalCoder
         unless key.is_a?(String) || key.is_a?(Symbol)
           raise ArgumentError, "key must be String or Symbol, not: #{key.class}"
         end
-        case value
-        when Hash, Array, String, Numeric, TrueClass, FalseClass, NilClass
-          storage_put(key, value)
-        else
-          raise ArgumentError, "value must be Hash, not: #{value.class}"
-        end
+        storage_put(key, value)
       end
 
       protected
@@ -64,6 +49,7 @@ module PostalCoder
 
       def storage_put(key, value)
         tyrant[key.to_s] = YAML.dump(value)
+        value # <- We don't want to return YAML in this case.
       end
 
       def tyrant

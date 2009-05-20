@@ -2,24 +2,42 @@ require 'test_helper'
 
 class PersistenceTest < Test::Unit::TestCase
 
-  context 'Creating an instance of DataStore' do
+  context 'DataStore.new' do
     should 'throw and argument error without :tt_host specified' do
       assert_raise ArgumentError do
         PostalCoder::Persistence::DataStore.new
       end
     end
 
-    should 'throw a better error if a tyrant connection fails' do
+    should 'throw a better error if the Tokyo Tyrant connection fails' do
       assert_raise PostalCoder::Errors::TTUnableToConnectError do
         PostalCoder::Persistence::DataStore.new(:tt_host => '/tmp/fake')
       end
     end
   end
 
-  context 'An instance of DataStore' do
+  context 'DataStore' do
     setup do
       Rufus::Tokyo::Tyrant.stubs(:new).returns({})
       @db = PostalCoder::Persistence::DataStore.new(:tt_host => '/tmp/tttest')
+    end
+
+    context '#fetch' do
+      should 'raise an error without any block specified' do
+        assert_raise ArgumentError do
+          @db.fetch(:stuff)
+        end
+      end
+
+      should 'get a value that exists' do
+        @db[:test_key] = 'test_value'
+        assert_equal 'test_value', @db.fetch(:test_key) { raise 'ultrafail' }
+      end
+
+      should 'set the value to whatever the block yields if value is nil' do
+        @db.fetch(:test_key) { 'block_value' }
+        assert_equal 'block_value', @db[:test_key]
+      end
     end
 
     context '#[]=' do

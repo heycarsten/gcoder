@@ -28,7 +28,7 @@ module PostalCoder
       end
 
       def to_hash
-        return @response if @response
+        return tidy_response if @response
         parse_json_response(http_get)
       end
 
@@ -48,6 +48,37 @@ module PostalCoder
 
       protected
 
+      def placemark
+        @response['Placemark'][0]
+      end
+
+      def latlon_box
+        placemark['ExtendedData']['LatLonBox']
+      end
+
+      def country
+        placemark['AddressDetails']['Country']
+      end
+
+      def tidy_response
+        { :accuracy => placemark['AddressDetails']['Accuracy'],
+          :country => {
+            :name => country['CountryName'],
+            :code => country['CountryNameCode'],
+            :administrative_area => country['AdministrativeArea']['AdministrativeAreaName']
+          },
+          :point => {
+            :latitude => placemark['Point']['coordinates'][0],
+            :longitude => placemark['Point']['coordinates'][1]
+          },
+          :box => {
+            :north => latlon_box['north'],
+            :south => latlon_box['south'],
+            :east => latlon_box['east'],
+            :west => latlon_box['west']
+        } }
+      end
+
       def http_get
         return @json_response if @json_response
         Timeout.timeout(@config[:gmaps_api_timeout]) do
@@ -62,7 +93,7 @@ module PostalCoder
         @response = JSON.parse(json_response)
         case @response['Status']['code']
         when 200
-          @response
+          tidy_response
         when 400
           raise Errors::APIMalformedRequestError, 'The GMaps Geo API has ' \
           'indicated that the request is not formed correctly: ' \

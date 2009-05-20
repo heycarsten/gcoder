@@ -13,9 +13,43 @@ module PostalCoder
       class_name = SYMBOLS_TO_NAMES_MAP.fetch(symbol) do |sym|
         raise Errors::UnknownFormatSymbolError, 'The format symbol ' \
         "#{sym.inspect} is not one of the reconized symbols, which are: " \
-        "#{SYMBOLS_TO_NAMES_MAP.keys.map { |s| s.inspect }.join(', ')}."
+        "#{SYMBOLS_TO_NAMES_MAP.keys.inspect}"
       end
       eval class_name
+    end
+
+    def self.symbols_to_classes(symbols)
+      unless symbols.is_a?(Array)
+        raise ArgumentError, "symbols must be Array, not: #{symbols.class}"
+      end
+      if symbols.empty?
+        raise ArgumentError, 'symbols must contain format symbols, it is empty.'
+      end
+      symbols.map { |f| symbol_to_class(f) }
+    end
+
+    def self.instantiate(postal_code, format_symbol = nil)
+      unless postal_code.is_a?(String)
+        raise ArgumentError, "postal_code must be String, not: #{postal_code.class}"
+      end
+      if format_symbol
+        symbol_to_class(format_symbol).new(postal_code)
+      else
+        auto_instantiate(postal_code)
+      end
+    end
+
+    def self.auto_instantiate(postal_code, accepted_formats = Config[:accepted_formats])
+      results = symbols_to_classes(accepted_formats).map do |format|
+        begin
+          format.new(postal_code)
+        rescue Errors::MalformedPostalCodeError
+          nil
+        end
+      end.compact
+      return results[0] if results.any?
+      raise Errors::MalformedPostalCodeError, "The postal code: #{postal_code}" \
+      ' did not properly map to any of the accepted formats.'
     end
 
 
@@ -40,7 +74,8 @@ module PostalCoder
       end
 
       def has_valid_form?
-        raise NotImplementedError, "#{self.class}#check_form must be implemented"
+        raise NotImplementedError, "#{self.class}#has_valid_form? must be " \
+        'implemented.'
       end
 
       protected
