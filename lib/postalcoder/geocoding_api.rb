@@ -68,8 +68,8 @@ module PostalCoder
             :administrative_area => country['AdministrativeArea']['AdministrativeAreaName']
           },
           :point => {
-            :latitude => placemark['Point']['coordinates'][0],
-            :longitude => placemark['Point']['coordinates'][1]
+            :longitude => placemark['Point']['coordinates'][0],
+            :latitude => placemark['Point']['coordinates'][1]
           },
           :box => {
             :north => latlon_box['north'],
