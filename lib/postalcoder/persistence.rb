@@ -13,8 +13,14 @@ module PostalCoder
         @tyrant = Rufus::Tokyo::Tyrant.new(@config[:tt_host], @config[:tt_port])
       rescue RuntimeError => boom
         if boom.message.include?('couldn\'t connect to tyrant')
-          raise Errors::TTUnableToConnectError, 'Unable to connect to the ' \
-          "Tokyo Tyrant server at #{@config[:tt_host]} [#{@config[:tt_port]}]"
+          errmsg = 'Unable to connect to the Tokyo Tyrant server at ' \
+          "#{@config[:tt_host]} [#{@config[:tt_port]}]"
+          if @config[:no_raise_on_connection_fail]
+            @tyrant = nil
+            STDERR.puts("[POSTALCODER] #{errmsg}")
+          else
+            raise Errors::TTUnableToConnectError, errmsg
+          end
         else
           raise boom
         end
@@ -43,13 +49,25 @@ module PostalCoder
       protected
 
       def storage_get(key)
-        value = tyrant[key.to_s]
-        value ? YAML.load(value) : nil
+        if tyrant
+          value = tyrant[key.to_s]
+          value ? YAML.load(value) : nil
+        else
+          STDERR.puts "[POSTALCODER] Unable to get #{key.inspect} " \
+          'because there is no Tyrant connection.'
+          nil
+        end
       end
 
       def storage_put(key, value)
-        tyrant[key.to_s] = YAML.dump(value)
-        value # <- We don't want to return YAML in this case.
+        if tyrant
+          tyrant[key.to_s] = YAML.dump(value)
+          value # <- We don't want to return YAML in this case.
+        else
+          STDERR.puts "[POSTALCODER] Unable to put #{key.inspect} " \
+          'because there is no Tyrant connection.'
+          value
+        end
       end
 
       def tyrant

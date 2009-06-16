@@ -7,6 +7,7 @@ module PostalCoder
       :gmaps_api_timeout => 2,
       :tt_host => nil,
       :tt_port => 0,
+      :no_raise_on_connection_fail => false,
       :accepted_formats => [:ca_postal_code, :us_zip_code] }
 
     def self.merge(overrides)

@@ -9,7 +9,7 @@ class ConfigTest < Test::Unit::TestCase
 
     should 'return a hash of updated config settings' do
       assert_instance_of Hash, @config
-      assert_equal 5, @config.size
+      assert_equal 6, @config.size
       assert_equal 3, @config[:gmaps_api_timeout]
     end
 
@@ -25,10 +25,10 @@ class ConfigTest < Test::Unit::TestCase
 
     should 'return a hash of updated config settings' do
       assert_instance_of Hash, @config
-      assert_equal 5, @config.size
+      assert_equal 6, @config.size
       assert_equal 1, @config[:gmaps_api_timeout]
     end
-    
+
     should 'change default configuration' do
       assert_equal 1, PostalCoder::Config[:gmaps_api_timeout]
     end
