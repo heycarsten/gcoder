@@ -5,13 +5,13 @@ class PersistenceTest < Test::Unit::TestCase
   context 'DataStore.new' do
     should 'throw and argument error without :tt_host specified' do
       assert_raise ArgumentError do
-        PostalCoder::Persistence::DataStore.new
+        GCoder::Persistence::DataStore.new
       end
     end
 
     should 'throw a better error if the Tokyo Tyrant connection fails' do
-      assert_raise PostalCoder::Errors::TTUnableToConnectError do
-        PostalCoder::Persistence::DataStore.new(:tt_host => '/tmp/fake')
+      assert_raise GCoder::Errors::TTUnableToConnectError do
+        GCoder::Persistence::DataStore.new(:tt_host => '/tmp/fake')
       end
     end
   end
@@ -19,7 +19,7 @@ class PersistenceTest < Test::Unit::TestCase
   context 'DataStore' do
     setup do
       Rufus::Tokyo::Tyrant.stubs(:new).returns({})
-      @db = PostalCoder::Persistence::DataStore.new(:tt_host => '/tmp/tttest')
+      @db = GCoder::Persistence::DataStore.new(:tt_host => '/tmp/tttest')
     end
 
     context '#fetch' do

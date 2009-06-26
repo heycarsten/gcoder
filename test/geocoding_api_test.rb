@@ -6,37 +6,37 @@ class GeocodingAPITest < Test::Unit::TestCase
   context 'initialize with incorrect arguments' do
     should 'fail with no arguments' do
       assert_raise ArgumentError do
-        PostalCoder::GeocodingAPI::Query.new
+        GCoder::GeocodingAPI::Query.new
       end
     end
 
     should 'fail with any argument other than a string' do
       assert_raise ArgumentError do
-        PostalCoder::GeocodingAPI::Query.new(nil)
+        GCoder::GeocodingAPI::Query.new(nil)
       end
       assert_raise ArgumentError do
-        PostalCoder::GeocodingAPI::Query.new(0)
+        GCoder::GeocodingAPI::Query.new(0)
       end
     end
 
     should 'fail when passed a blank string as an argument' do
-      assert_raise PostalCoder::Errors::BlankQueryError do
-        PostalCoder::GeocodingAPI::Query.new('         ')
+      assert_raise GCoder::Errors::BlankQueryError do
+        GCoder::GeocodingAPI::Query.new('         ')
       end
     end
   end
 
   context 'initialize with no API key present' do
     should 'fall down, go boom' do
-      assert_raise PostalCoder::Errors::NoAPIKeyError do
-        PostalCoder::GeocodingAPI::Query.new('M6R2G5')
+      assert_raise GCoder::Errors::NoAPIKeyError do
+        GCoder::GeocodingAPI::Query.new('M6R2G5')
       end
     end
   end
 
   context 'query with correct arguments' do
     setup do
-      @zip = PostalCoder::GeocodingAPI::Query.new('M6R2G5',
+      @zip = GCoder::GeocodingAPI::Query.new('M6R2G5',
         :gmaps_api_key => 'apikey')
     end
 
@@ -56,7 +56,7 @@ class GeocodingAPITest < Test::Unit::TestCase
 
     should 'raise an error when API returns malformed request' do
       @zip.expects(:http_get).returns(PAYLOADS[:json_400])
-      assert_raise PostalCoder::Errors::APIMalformedRequestError do
+      assert_raise GCoder::Errors::APIMalformedRequestError do
         @zip.to_hash
       end
     end

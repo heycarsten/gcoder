@@ -5,11 +5,11 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |g|
-    g.name = 'postalcoder'
+    g.name = 'gcoder'
     g.summary = 'A library for geocoding postal codes via the Google Maps ' \
       'Geocoding API with a persisted cache through Tokyo Tyrant'
     g.email = 'heycarsten@gmail.com'
-    g.homepage = 'http://github.com/heycarsten/postalcoder'
+    g.homepage = 'http://github.com/heycarsten/gcoder'
     g.authors = ['Carsten Nielsen']
   end
 rescue LoadError
@@ -52,7 +52,7 @@ task :default => :test
 #     version = ''
 #   end
 #   rdoc.rdoc_dir = 'rdoc'
-#   rdoc.title = "PostalCoder #{version}"
+#   rdoc.title = "GCoder #{version}"
 #   rdoc.rdoc_files.include('README*')
 #   rdoc.rdoc_files.include('lib/**/*.rb')
 # end

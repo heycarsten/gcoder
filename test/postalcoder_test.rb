@@ -1,24 +1,24 @@
 require 'test_helper'
 
-class PostalCoderTest < Test::Unit::TestCase
+class GCoderTest < Test::Unit::TestCase
 
   context 'ProxyMethods' do
-    should 'be present in PostalCoder module' do
-      assert_respond_to PostalCoder, :config=
-      assert_respond_to PostalCoder, :connect
+    should 'be present in GCoder module' do
+      assert_respond_to GCoder, :config=
+      assert_respond_to GCoder, :connect
     end
 
-    context 'PostalCoder.config=' do
+    context 'GCoder.config=' do
       should 'proxy to Config.update' do
-        PostalCoder::Config.expects(:update).with({})
-        assert PostalCoder.config = {}
+        GCoder::Config.expects(:update).with({})
+        assert GCoder.config = {}
       end
     end
 
-    context 'PostalCoder.connect' do
+    context 'GCoder.connect' do
       should 'proxy to Resolver.new' do
-        PostalCoder::Resolver.expects(:new).with({}).returns(:it_works)
-        assert_equal :it_works, PostalCoder.connect
+        GCoder::Resolver.expects(:new).with({}).returns(:it_works)
+        assert_equal :it_works, GCoder.connect
       end
     end
   end

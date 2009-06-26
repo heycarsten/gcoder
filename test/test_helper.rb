@@ -5,7 +5,7 @@ require 'mocha'
 
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $:.unshift(File.dirname(__FILE__))
-require 'postalcoder'
+require 'gcoder'
 
 class Test::Unit::TestCase
 

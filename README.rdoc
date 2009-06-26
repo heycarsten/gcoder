@@ -1,4 +1,4 @@
-= PostalCoder
+= GCoder
 
 Instead of letting postal codes turn me into a postal coder, I made this gem!
 

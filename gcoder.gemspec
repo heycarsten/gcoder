@@ -1,48 +1,51 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{postalcoder}
-  s.version = "0.2.0"
+  s.name = %q{gcoder}
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Carsten Nielsen"]
-  s.date = %q{2009-06-15}
+  s.date = %q{2009-06-26}
   s.email = %q{heycarsten@gmail.com}
   s.extra_rdoc_files = [
     "README.rdoc"
   ]
   s.files = [
-    "README.rdoc",
-    "Rakefile",
-    "VERSION.yml",
-    "lib/postalcoder.rb",
-    "lib/postalcoder/config.rb",
-    "lib/postalcoder/formats.rb",
-    "lib/postalcoder/geocoding_api.rb",
-    "lib/postalcoder/persistence.rb",
-    "lib/postalcoder/resolver.rb",
-    "test/config_test.rb",
-    "test/formats_test.rb",
-    "test/geocoding_api_test.rb",
-    "test/persistence_test.rb",
-    "test/postalcoder_test.rb",
-    "test/resolver_test.rb",
-    "test/test_helper.rb"
+    ".document",
+     ".gitignore",
+     "README.rdoc",
+     "Rakefile",
+     "VERSION.yml",
+     "gcoder.gemspec",
+     "lib/postalcoder.rb",
+     "lib/postalcoder/config.rb",
+     "lib/postalcoder/formats.rb",
+     "lib/postalcoder/geocoding_api.rb",
+     "lib/postalcoder/persistence.rb",
+     "lib/postalcoder/resolver.rb",
+     "test/config_test.rb",
+     "test/formats_test.rb",
+     "test/geocoding_api_test.rb",
+     "test/persistence_test.rb",
+     "test/postalcoder_test.rb",
+     "test/resolver_test.rb",
+     "test/test_helper.rb"
   ]
   s.has_rdoc = true
-  s.homepage = %q{http://github.com/heycarsten/postalcoder}
+  s.homepage = %q{http://github.com/heycarsten/gcoder}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{A library for geocoding postal codes via the Google Maps Geocoding API with a persisted cache through Tokyo Tyrant}
   s.test_files = [
     "test/config_test.rb",
-    "test/formats_test.rb",
-    "test/geocoding_api_test.rb",
-    "test/persistence_test.rb",
-    "test/postalcoder_test.rb",
-    "test/resolver_test.rb",
-    "test/test_helper.rb"
+     "test/formats_test.rb",
+     "test/geocoding_api_test.rb",
+     "test/persistence_test.rb",
+     "test/postalcoder_test.rb",
+     "test/resolver_test.rb",
+     "test/test_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
