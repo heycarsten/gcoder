@@ -19,8 +19,8 @@ module GCoder
   module Errors
     class Error < StandardError; end
     class MalformedPostalCodeError < Error; end
-    class BlankQueryError < Error; end
-    class QueryTimeoutError < Error; end
+    class BlankRequestError < Error; end
+    class RequestTimeoutError < Error; end
     class NoAPIKeyError < Error; end
     class APIMalformedRequestError < Error; end
     class APIGeocodingError < Error; end

@@ -17,7 +17,7 @@ module GCoder
           "#{@config[:tt_host]} [#{@config[:tt_port]}]"
           if @config[:no_raise_on_connection_fail]
             @tyrant = nil
-            STDERR.puts("[POSTALCODER] #{errmsg}")
+            STDERR.puts("[GCODER] #{errmsg}")
           else
             raise Errors::TTUnableToConnectError, errmsg
           end
@@ -53,7 +53,7 @@ module GCoder
           value = tyrant[key.to_s]
           value ? YAML.load(value) : nil
         else
-          STDERR.puts "[POSTALCODER] Unable to get #{key.inspect} " \
+          STDERR.puts "[GCODER] Unable to get #{key.inspect} " \
           'because there is no Tyrant connection.'
           nil
         end
@@ -64,7 +64,7 @@ module GCoder
           tyrant[key.to_s] = YAML.dump(value)
           value # <- We don't want to return YAML in this case.
         else
-          STDERR.puts "[POSTALCODER] Unable to put #{key.inspect} " \
+          STDERR.puts "[GCODER] Unable to put #{key.inspect} " \
           'because there is no Tyrant connection.'
           value
         end

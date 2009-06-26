@@ -10,9 +10,7 @@ module GCoder
       :key => nil }
 
 
-    class Query
-
-      attr_reader :query
+    class Request
 
       def self.get(query, options = {})
         new(query, options).to_hash
@@ -37,9 +35,13 @@ module GCoder
       end
 
       def to_params
-        # No need to escape the keys and values because (so far) they do not
-        # contain escapable characters. -- CKN
-        params.inject([]) { |a, (k, v)| a << "#{k}=#{v}" }.join('&')
+        params.inject([]) do |array, (key, value)|
+          array << "#{uri_escape key}=#{uri_escape value}"
+        end.join('&')
+      end
+
+      def query
+        @config[:append_query] ? "#{@query} #{@config[:append_query]}" : @query
       end
 
       def uri
@@ -47,6 +49,13 @@ module GCoder
       end
 
       protected
+
+      # Snaked from Rack::Utils which 'stole' it from Camping.
+      def uri_escape(string)
+        string.to_s.gsub(/([^ a-zA-Z0-9_.-]+)/n) do
+          '%' + $1.unpack('H2' * $1.size).join('%').upcase
+        end.tr(' ', '+')
+      end
 
       def placemark
         @response['Placemark'][0]
@@ -85,7 +94,7 @@ module GCoder
           @json_response = open(uri).read
         end
       rescue Timeout::TimeoutError
-        raise Errors::QueryTimeoutError, 'The query timed out at ' \
+        raise Errors::RequestTimeoutError, 'The query timed out at ' \
         "#{@config[:timeout]} second(s)"
       end
 
@@ -106,7 +115,7 @@ module GCoder
 
       def validate_state!
         if '' == query.strip.to_s
-          raise Errors::BlankQueryError, 'You must specifiy a query to resolve.'
+          raise Errors::BlankRequestError, 'You must specifiy a query to resolve.'
         end
         unless @config[:gmaps_api_key]
           raise Errors::NoAPIKeyError, 'You must provide a Google Maps API ' \

@@ -6,22 +6,22 @@ class GeocodingAPITest < Test::Unit::TestCase
   context 'initialize with incorrect arguments' do
     should 'fail with no arguments' do
       assert_raise ArgumentError do
-        GCoder::GeocodingAPI::Query.new
+        GCoder::GeocodingAPI::Request.new
       end
     end
 
     should 'fail with any argument other than a string' do
       assert_raise ArgumentError do
-        GCoder::GeocodingAPI::Query.new(nil)
+        GCoder::GeocodingAPI::Request.new(nil)
       end
       assert_raise ArgumentError do
-        GCoder::GeocodingAPI::Query.new(0)
+        GCoder::GeocodingAPI::Request.new(0)
       end
     end
 
     should 'fail when passed a blank string as an argument' do
-      assert_raise GCoder::Errors::BlankQueryError do
-        GCoder::GeocodingAPI::Query.new('         ')
+      assert_raise GCoder::Errors::BlankRequestError do
+        GCoder::GeocodingAPI::Request.new('         ')
       end
     end
   end
@@ -29,14 +29,14 @@ class GeocodingAPITest < Test::Unit::TestCase
   context 'initialize with no API key present' do
     should 'fall down, go boom' do
       assert_raise GCoder::Errors::NoAPIKeyError do
-        GCoder::GeocodingAPI::Query.new('M6R2G5')
+        GCoder::GeocodingAPI::Request.new('M6R2G5')
       end
     end
   end
 
   context 'query with correct arguments' do
     setup do
-      @zip = GCoder::GeocodingAPI::Query.new('M6R2G5',
+      @zip = GCoder::GeocodingAPI::Request.new('M6R2G5',
         :gmaps_api_key => 'apikey')
     end
 
