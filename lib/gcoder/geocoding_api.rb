@@ -51,18 +51,18 @@ module GCoder
       def get
         return @json_response if @json_response
         Timeout.timeout(@config[:gmaps_api_timeout]) do
-          Response.new(http_get)
+          Response.new(self)
         end
       rescue Timeout::Error
         raise Errors::RequestTimeoutError, 'The query timed out at ' \
         "#{@config[:timeout]} second(s)"
       end
 
-      protected
-
       def http_get
         open(uri).read
       end
+
+      protected
 
       # Snaked from Rack::Utils which 'stole' it from Camping.
       def uri_escape(string)
@@ -87,8 +87,9 @@ module GCoder
 
     class Response
 
-      def initialize(raw_response)
-        @response = JSON.parse(raw_response)
+      def initialize(request)
+        @request = request
+        @response = JSON.parse(@request.http_get)
       end
 
       def status
@@ -100,10 +101,11 @@ module GCoder
         when 400
           raise Errors::APIMalformedRequestError, 'The GMaps Geo API has ' \
           'indicated that the request is not formed correctly: ' \
-          "(#{@response.inspect})"
+          "(#{@request.uri})\n\n#{@request.inspect}"
         when 602
           raise Errors::APIGeocodingError, 'The GMaps Geo API has indicated ' \
-          "that it is not able to geocode the request: (#{@response.inspect})"
+          "that it is not able to geocode the request: (#{@request.uri})" \
+          "\n\n#{@request.inspect}"
         end
       end
 

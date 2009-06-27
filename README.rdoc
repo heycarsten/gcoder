@@ -1,11 +1,11 @@
 = GCoder
 
 Geocode stuff using the Google Maps Geocoding API and cache it through Tokyo
-Tyrant to increase speed and throughput.
+Tyrant to increase speed and throughput. If you're looking for something
+hardcore you should check out GeoKit! [http://github.com/andre/geokit-gem]
 
 
 == Bon Usage
-
 
  require 'rubygems'
  require 'gcoder'
@@ -15,9 +15,9 @@ Tyrant to increase speed and throughput.
    :tt_port => 1234,
    :gmaps_api_key => 's3cr37s4uc3-df333dswddfsdf-332223',
    :append_query => 'Ontario Canada')
- 
+
  G['dundas and sorauren']
- 
+
  # => {:box=>
  # =>   {:north=>43.6543396,
  # =>    :south=>43.6480444,
@@ -33,7 +33,7 @@ Tyrant to increase speed and throughput.
 * Add dependencies to Gemspec
 * Support for multiple results
 * Better tests
-* Just general betterment
+* General betterment
 
 
 == Copyright
