@@ -61,7 +61,7 @@ module GCoder
 
       def storage_put(key, value)
         if tyrant
-          tyrant[key.to_s] = YAML.dump(value)
+          tyrant[key.to_s.downcase] = YAML.dump(value)
           value # <- We don't want to return YAML in this case.
         else
           STDERR.puts "[GCODER] Unable to put #{key.inspect} " \
