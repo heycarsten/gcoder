@@ -29,6 +29,7 @@ Tyrant to increase speed and throughput.
 
 == TODO
 
+ * Add dependencies to Gemspec
  * Support for multiple results
  * Better tests
  * Just general betterment
