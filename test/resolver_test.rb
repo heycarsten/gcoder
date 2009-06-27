@@ -27,7 +27,7 @@ class ResolverTest < Test::Unit::TestCase
     end
 
     should 'raise malformed postal code error for a nil postal code' do
-      assert_raise GCoder::Errors::MalformedPostalCodeError do
+      assert_raise GCoder::Errors::BlankRequestError do
         @db.resolve(nil)
       end
     end

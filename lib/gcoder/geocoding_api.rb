@@ -13,21 +13,21 @@ module GCoder
     class Request
 
       def self.get(query, options = {})
-        new(query, options).to_hash
+        response = new(query, options).get
+        response.validate!
+        response.to_h
       end
 
       def initialize(query, options = {})
+        unless query
+          raise Errors::BlankRequestError, "query cannot be nil"
+        end
         unless query.is_a?(String)
-          raise ArgumentError, "query must be a String, not: #{query.class}"
+          raise Errors::MalformedQueryError, "query must be String, not: #{query.class}"
         end
         @config = Config.merge(options)
         @query = query
         validate_state!
-      end
-
-      def to_hash
-        return tidy_response if @response
-        parse_json_response(http_get)
       end
 
       def params
@@ -48,69 +48,27 @@ module GCoder
         [BASE_URI, '?', to_params].join
       end
 
+      def get
+        return @json_response if @json_response
+        Timeout.timeout(@config[:gmaps_api_timeout]) do
+          Response.new(http_get)
+        end
+      rescue Timeout::Error
+        raise Errors::RequestTimeoutError, 'The query timed out at ' \
+        "#{@config[:timeout]} second(s)"
+      end
+
       protected
+
+      def http_get
+        open(uri).read
+      end
 
       # Snaked from Rack::Utils which 'stole' it from Camping.
       def uri_escape(string)
         string.to_s.gsub(/([^ a-zA-Z0-9_.-]+)/n) do
           '%' + $1.unpack('H2' * $1.size).join('%').upcase
         end.tr(' ', '+')
-      end
-
-      def placemark
-        @response['Placemark'][0]
-      end
-
-      def latlon_box
-        placemark['ExtendedData']['LatLonBox']
-      end
-
-      def country
-        placemark['AddressDetails']['Country']
-      end
-
-      def tidy_response
-        { :accuracy => placemark['AddressDetails']['Accuracy'],
-          :country => {
-            :name => country['CountryName'],
-            :code => country['CountryNameCode'],
-            :administrative_area => country['AdministrativeArea']['AdministrativeAreaName']
-          },
-          :point => {
-            :longitude => placemark['Point']['coordinates'][0],
-            :latitude => placemark['Point']['coordinates'][1]
-          },
-          :box => {
-            :north => latlon_box['north'],
-            :south => latlon_box['south'],
-            :east => latlon_box['east'],
-            :west => latlon_box['west']
-        } }
-      end
-
-      def http_get
-        return @json_response if @json_response
-        Timeout.timeout(@config[:gmaps_api_timeout]) do
-          @json_response = open(uri).read
-        end
-      rescue Timeout::TimeoutError
-        raise Errors::RequestTimeoutError, 'The query timed out at ' \
-        "#{@config[:timeout]} second(s)"
-      end
-
-      def parse_json_response(json_response)
-        @response = JSON.parse(json_response)
-        case @response['Status']['code']
-        when 200
-          tidy_response
-        when 400
-          raise Errors::APIMalformedRequestError, 'The GMaps Geo API has ' \
-          'indicated that the request is not formed correctly: ' \
-          "(#{query.inspect})"
-        when 602
-          raise Errors::APIGeocodingError, 'The GMaps Geo API has indicated ' \
-          "that it is not able to geocode the request: (#{query.inspect})"
-        end
       end
 
       def validate_state!
@@ -125,6 +83,85 @@ module GCoder
       end
 
     end
+
+
+    class Response
+
+      def initialize(raw_response)
+        @response = JSON.parse(raw_response)
+      end
+
+      def status
+        @response['Status']['code']
+      end
+
+      def validate!
+        case status
+        when 400
+          raise Errors::APIMalformedRequestError, 'The GMaps Geo API has ' \
+          'indicated that the request is not formed correctly: ' \
+          "(#{@response.inspect})"
+        when 602
+          raise Errors::APIGeocodingError, 'The GMaps Geo API has indicated ' \
+          "that it is not able to geocode the request: (#{@response.inspect})"
+        end
+      end
+
+      def to_h
+        { :accuracy => accuracy,
+          :country => {
+            :name => country_name,
+            :code => country_code,
+            :administrative_area => administrative_area },
+          :point => {
+            :longitude => longitude,
+            :latitude => latitude },
+          :box => box }
+      end
+
+      def box
+        { :north => placemark['ExtendedData']['LatLonBox']['north'],
+          :south => placemark['ExtendedData']['LatLonBox']['south'],
+          :east => placemark['ExtendedData']['LatLonBox']['east'],
+          :west => placemark['ExtendedData']['LatLonBox']['west'] }
+      end
+
+      def accuracy
+        placemark['AddressDetails']['Accuracy']
+      end
+
+      def latitude
+        placemark['Point']['coordinates'][1]
+      end
+
+      def longitude
+        placemark['Point']['coordinates'][0]
+      end
+
+      def latlon_box
+        placemark['ExtendedData']['LatLonBox']
+      end
+
+      def country_name
+        placemark['AddressDetails']['Country']['CountryName']
+      end
+
+      def country_code
+        placemark['AddressDetails']['Country']['CountryNameCode']
+      end
+
+      def administrative_area
+        placemark['AddressDetails']['Country']['AdministrativeArea']['AdministrativeAreaName']
+      end
+
+      private
+
+      def placemark
+        @response['Placemark'][0]
+      end
+
+    end
+
 
   end
 end

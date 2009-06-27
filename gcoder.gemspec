@@ -18,17 +18,15 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION.yml",
      "gcoder.gemspec",
-     "lib/postalcoder.rb",
-     "lib/postalcoder/config.rb",
-     "lib/postalcoder/formats.rb",
-     "lib/postalcoder/geocoding_api.rb",
-     "lib/postalcoder/persistence.rb",
-     "lib/postalcoder/resolver.rb",
+     "lib/gcoder.rb",
+     "lib/gcoder/config.rb",
+     "lib/gcoder/geocoding_api.rb",
+     "lib/gcoder/persistence.rb",
+     "lib/gcoder/resolver.rb",
      "test/config_test.rb",
-     "test/formats_test.rb",
+     "test/gcoder_test.rb",
      "test/geocoding_api_test.rb",
      "test/persistence_test.rb",
-     "test/postalcoder_test.rb",
      "test/resolver_test.rb",
      "test/test_helper.rb"
   ]
@@ -40,10 +38,9 @@ Gem::Specification.new do |s|
   s.summary = %q{A library for geocoding postal codes via the Google Maps Geocoding API with a persisted cache through Tokyo Tyrant}
   s.test_files = [
     "test/config_test.rb",
-     "test/formats_test.rb",
+     "test/gcoder_test.rb",
      "test/geocoding_api_test.rb",
      "test/persistence_test.rb",
-     "test/postalcoder_test.rb",
      "test/resolver_test.rb",
      "test/test_helper.rb"
   ]

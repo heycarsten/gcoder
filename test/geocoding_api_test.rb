@@ -11,10 +11,10 @@ class GeocodingAPITest < Test::Unit::TestCase
     end
 
     should 'fail with any argument other than a string' do
-      assert_raise ArgumentError do
+      assert_raise GCoder::Errors::BlankRequestError do
         GCoder::GeocodingAPI::Request.new(nil)
       end
-      assert_raise ArgumentError do
+      assert_raise GCoder::Errors::MalformedQueryError do
         GCoder::GeocodingAPI::Request.new(0)
       end
     end
@@ -42,22 +42,23 @@ class GeocodingAPITest < Test::Unit::TestCase
 
     should 'return parsed and tidied JSON' do
       @zip.expects(:http_get).returns(PAYLOADS[:json_m6r2g5])
-      assert_equal 5, @zip.to_hash[:accuracy]
-      assert_equal 'Canada', @zip.to_hash[:country][:name]
-      assert_equal 'CA', @zip.to_hash[:country][:code]
-      assert_equal 'ON', @zip.to_hash[:country][:administrative_area]
-      assert_equal 43.6504650, @zip.to_hash[:point][:latitude]
-      assert_equal -79.4449720, @zip.to_hash[:point][:longitude]
-      assert_equal 43.6536126, @zip.to_hash[:box][:north]
-      assert_equal 43.6473174, @zip.to_hash[:box][:south]
-      assert_equal -79.4418244, @zip.to_hash[:box][:east]
-      assert_equal -79.4481196, @zip.to_hash[:box][:west]
+      response = @zip.get.to_h
+      assert_equal 5, response[:accuracy]
+      assert_equal 'Canada', response[:country][:name]
+      assert_equal 'CA', response[:country][:code]
+      assert_equal 'ON', response[:country][:administrative_area]
+      assert_equal 43.6504650, response[:point][:latitude]
+      assert_equal -79.4449720, response[:point][:longitude]
+      assert_equal 43.6536126, response[:box][:north]
+      assert_equal 43.6473174, response[:box][:south]
+      assert_equal -79.4418244, response[:box][:east]
+      assert_equal -79.4481196, response[:box][:west]
     end
 
     should 'raise an error when API returns malformed request' do
       @zip.expects(:http_get).returns(PAYLOADS[:json_400])
       assert_raise GCoder::Errors::APIMalformedRequestError do
-        @zip.to_hash
+        @zip.get.validate!
       end
     end
 

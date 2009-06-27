@@ -8,7 +8,6 @@ require 'timeout'
 $:.unshift(File.dirname(__FILE__))
 
 require 'gcoder/config'
-require 'gcoder/formats'
 require 'gcoder/geocoding_api'
 require 'gcoder/persistence'
 require 'gcoder/resolver'
@@ -18,7 +17,7 @@ module GCoder
 
   module Errors
     class Error < StandardError; end
-    class MalformedPostalCodeError < Error; end
+    class MalformedQueryError < Error; end
     class BlankRequestError < Error; end
     class RequestTimeoutError < Error; end
     class NoAPIKeyError < Error; end
