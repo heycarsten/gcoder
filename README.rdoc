@@ -7,32 +7,34 @@ Tyrant to increase speed and throughput.
 == Bon Usage
 
 
-  require 'rubygems'
-  require 'gcoder'
+ require 'rubygems'
+ require 'gcoder'
 
-  G = GCoder.connect(
-    :tt_host => '127.0.0.1',
-    :tt_port => 1234,
-    :gmaps_api_key => 's3cr37s4uc3-df333dswddfsdf-332223',
-    :append_query => 'Ontario Canada')
-
-  G['dundas and sorauren']
-  # => {:box=>
-  # =>   {:north=>43.6543396,
-  # =>    :south=>43.6480444,
-  # =>    :east=>-79.4421004,
-  # =>    :west=>-79.4483956},
-  # =>  :point=>{:longitude=>-79.445248, :latitude=>43.651192},
-  # =>  :accuracy=>7,
-  # =>  :country=>{:administrative_area=>"ON", :code=>"CA", :name=>"Canada"}}
+ G = GCoder.connect(
+   :tt_host => '127.0.0.1',
+   :tt_port => 1234,
+   :gmaps_api_key => 's3cr37s4uc3-df333dswddfsdf-332223',
+   :append_query => 'Ontario Canada')
+ 
+ G['dundas and sorauren']
+ 
+ # => {:box=>
+ # =>   {:north=>43.6543396,
+ # =>    :south=>43.6480444,
+ # =>    :east=>-79.4421004,
+ # =>    :west=>-79.4483956},
+ # =>  :point=>{:longitude=>-79.445248, :latitude=>43.651192},
+ # =>  :accuracy=>7,
+ # =>  :country=>{:administrative_area=>"ON", :code=>"CA", :name=>"Canada"}}
 
 
 == TODO
 
- * Add dependencies to Gemspec
- * Support for multiple results
- * Better tests
- * Just general betterment
+* Add dependencies to Gemspec
+* Support for multiple results
+* Better tests
+* Just general betterment
+
 
 == Copyright
 
