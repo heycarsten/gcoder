@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{gcoder}
-  s.version = "0.3.1"
+  s.version = "0.3.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Carsten Nielsen"]
-  s.date = %q{2009-06-27}
+  s.date = %q{2009-06-29}
   s.email = %q{heycarsten@gmail.com}
   s.extra_rdoc_files = [
     "README.rdoc"
@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.1}
-  s.summary = %q{A library for geocoding postal codes via the Google Maps Geocoding API with a persisted cache through Tokyo Tyrant}
+  s.summary = %q{A library for geocoding stuff through the Google Maps Geocoding API with a persisted cache via Tokyo Tyrant.}
   s.test_files = [
     "test/config_test.rb",
      "test/gcoder_test.rb",
