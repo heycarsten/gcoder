@@ -114,7 +114,7 @@ module GCoder
           :country => {
             :name => country_name,
             :code => country_code,
-            :administrative_area => administrative_area },
+            :administrative_area => administrative_area_name },
           :point => {
             :longitude => longitude,
             :latitude => latitude },
@@ -122,44 +122,68 @@ module GCoder
       end
 
       def box
-        { :north => placemark['ExtendedData']['LatLonBox']['north'],
-          :south => placemark['ExtendedData']['LatLonBox']['south'],
-          :east => placemark['ExtendedData']['LatLonBox']['east'],
-          :west => placemark['ExtendedData']['LatLonBox']['west'] }
+        { :north => latlon_box['north'],
+          :south => latlon_box['south'],
+          :east => latlon_box['east'],
+          :west => latlon_box['west'] }
       end
 
       def accuracy
-        placemark['AddressDetails']['Accuracy']
+        address_details['Accuracy']
       end
 
       def latitude
-        placemark['Point']['coordinates'][1]
+        coordinates[1]
       end
 
       def longitude
-        placemark['Point']['coordinates'][0]
-      end
-
-      def latlon_box
-        placemark['ExtendedData']['LatLonBox']
+        coordinates[0]
       end
 
       def country_name
-        placemark['AddressDetails']['Country']['CountryName']
+        country['CountryName']
       end
 
       def country_code
-        placemark['AddressDetails']['Country']['CountryNameCode']
+        country['CountryNameCode']
       end
 
-      def administrative_area
-        placemark['AddressDetails']['Country']['AdministrativeArea']['AdministrativeAreaName']
+      def administrative_area_name
+        administrative_area['AdministrativeAreaName']
       end
 
       private
 
+      def coordinates
+        point['coordinates'] || []
+      end
+
+      def point
+        placemark['Point'] || {}
+      end
+
+      def country
+        address_details['Country'] || {}
+      end
+
+      def administrative_area
+        country['AdministrativeArea'] || {}
+      end
+
+      def address_details
+        placemark['AddressDetails'] || {}
+      end
+
+      def latlon_box
+        extended_data['LatLonBox'] || {}
+      end
+
+      def extended_data
+        placemark['ExtendedData'] || {}
+      end
+
       def placemark
-        @response['Placemark'][0]
+        @response['Placemark'][0] || {}
       end
 
     end
