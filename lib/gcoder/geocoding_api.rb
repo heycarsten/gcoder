@@ -55,7 +55,7 @@ module GCoder
         end
       rescue Timeout::Error
         raise Errors::RequestTimeoutError, 'The query timed out at ' \
-        "#{@config[:timeout]} second(s)"
+        "#{@config[:gmaps_api_timeout]} second(s)"
       end
 
       def http_get
