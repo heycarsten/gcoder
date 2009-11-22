@@ -183,7 +183,7 @@ module GCoder
       end
 
       def placemark
-        @response['Placemark'][0] || {}
+        (p = @response['Placemark']) ? p[0] : {}
       end
 
     end
