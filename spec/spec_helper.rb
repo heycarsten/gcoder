@@ -1,16 +1,12 @@
-require 'rubygems'
-require 'test/unit'
-require 'shoulda'
-require 'mocha'
-
-$:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-$:.unshift(File.dirname(__FILE__))
+require 'minitest/spec'
 require 'gcoder'
 
-class Test::Unit::TestCase
+MiniTest::Unit.autorun
 
-  PAYLOADS = {
-    :json_m6r2g5 => %q<
+unless defined? SpecHelper
+  module SpecHelper
+    PAYLOADS = {
+      :json_m6r2g5 => <<-JSON
 {
 "name": "M6R2G5",
 "Status": {
@@ -33,26 +29,32 @@ class Test::Unit::TestCase
     "coordinates": [ -79.4449720, 43.6504650, 0 ]
   }
 } ]
-}>,
-    :json_602 => %q<
+}
+JSON
+,
+      :json_602 => <<-JSON
 {
   "name": "crashbangboom",
   "Status": {
     "code": 602,
     "request": "geocode"
   }
-}>,
-    :json_400 => %q<
+}
+JSON
+,
+      :json_400 => <<-JSON
 {
   "name": "",
   "Status": {
     "code": 400,
     "request": "geocode"
   }
-}>,
-    :test_string => "test\nstring",
-    :test_hash => { 'test' => 'value', 100 => 'one hundred' },
-    :test_array => ['test', 1, 3.1415, true, false, nil]
-  }
-
+}
+JSON
+,
+      :test_string => "test\nstring",
+      :test_hash => { 'test' => 'value', 100 => 'one hundred' },
+      :test_array => ['test', 1, 3.1415, true, false, nil]
+    }
+  end
 end

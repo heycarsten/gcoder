@@ -1,5 +1,5 @@
 module GCoder
-  module GeocodingAPI
+  module Geocoder
 
     BASE_URI = 'http://maps.google.com/maps/geo'
     BASE_PARAMS = {
@@ -9,15 +9,13 @@ module GCoder
       :sensor => 'false',
       :key => nil }
 
+    def self.get(query, options = {})
+      response = new(query, options).get
+      response.validate!
+      response.to_h
+    end
 
     class Request
-
-      def self.get(query, options = {})
-        response = new(query, options).get
-        response.validate!
-        response.to_h
-      end
-
       def initialize(query, options = {})
         unless query
           raise Errors::BlankRequestError, "query cannot be nil"
@@ -25,23 +23,28 @@ module GCoder
         unless query.is_a?(String)
           raise Errors::MalformedQueryError, "query must be String, not: #{query.class}"
         end
-        @config = Config.merge(options)
+        @config = GCoder.config.merge(options)
         @query = query
         validate_state!
       end
 
       def params
-        BASE_PARAMS.merge(:key => @config[:gmaps_api_key], :q => query)
+        BASE_PARAMS.dup.tap do |p|
+          p[:key] = @config[:api_key]
+          p[:q]   = query
+          p[:gl]  = @config[:country] if @config[:country]
+          p
+        end
       end
 
       def to_params
-        params.inject([]) do |array, (key, value)|
-          array << "#{uri_escape key}=#{uri_escape value}"
-        end.join('&')
+        @to_params ||= begin
+          params.map { |k, v| "#{uri_escape(k)}=#{uri_escape(v)}" }.join('&')
+        end
       end
 
       def query
-        @config[:append_query] ? "#{@query} #{@config[:append_query]}" : @query
+        @config[:append] ? "#{@query} #{@config[:append]}" : @query
       end
 
       def uri
@@ -50,12 +53,11 @@ module GCoder
 
       def get
         return @json_response if @json_response
-        Timeout.timeout(@config[:gmaps_api_timeout]) do
+        Timeout.timeout(@config[:timeout]) do
           Response.new(self)
         end
       rescue Timeout::Error
-        raise Errors::RequestTimeoutError, 'The query timed out at ' \
-        "#{@config[:gmaps_api_timeout]} second(s)"
+        raise TimeoutError, "Query timeout after #{@config[:timeout]} second(s)"
       end
 
       def http_get
@@ -73,10 +75,10 @@ module GCoder
 
       def validate_state!
         if '' == query.strip.to_s
-          raise Errors::BlankRequestError, 'You must specifiy a query to resolve.'
+          raise Errors::GeocoderError, 'You must specifiy a query to resolve.'
         end
-        unless @config[:gmaps_api_key]
-          raise Errors::NoAPIKeyError, 'You must provide a Google Maps API ' \
+        unless @config[:api_key]
+          raise Errors::GeocoderError, 'You must provide a Google Maps API ' \
           'key in your configuration. Go to http://code.google.com/apis/maps/' \
           'signup.html to get one.'
         end
@@ -86,7 +88,6 @@ module GCoder
 
 
     class Response
-
       def initialize(request)
         @request = request
         @response = JSON.parse(@request.http_get)
@@ -99,17 +100,17 @@ module GCoder
       def validate!
         case status
         when 400
-          raise Errors::APIMalformedRequestError, 'The GMaps Geo API has ' \
+          raise GeocoderError, 'The GMaps Geo API has ' \
           'indicated that the request is not formed correctly: ' \
           "(#{@request.uri})\n\n#{@request.inspect}"
         when 602
-          raise Errors::APIGeocodingError, 'The GMaps Geo API has indicated ' \
+          raise GeocoderError, 'The GMaps Geo API has indicated ' \
           "that it is not able to geocode the request: (#{@request.uri})" \
           "\n\n#{@request.inspect}"
         end
       end
 
-      def to_h
+      def to_hash
         { :accuracy => accuracy,
           :country => {
             :name => country_name,
@@ -119,6 +120,10 @@ module GCoder
             :longitude => longitude,
             :latitude => latitude },
           :box => box }
+      end
+
+      def as_json
+        JSON.dump(to_hash)
       end
 
       def box

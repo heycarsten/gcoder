@@ -1,42 +1,34 @@
-require 'rubygems'
-require 'rufus/tokyo/tyrant'
+require 'redis'
 require 'json'
-require 'yaml'
 require 'open-uri'
 require 'timeout'
 
 $:.unshift(File.dirname(__FILE__))
 
-require 'gcoder/config'
-require 'gcoder/geocoding_api'
-require 'gcoder/persistence'
+require 'gcoder/version'
+require 'gcoder/geocoder'
+require 'gcoder/adapters'
 require 'gcoder/resolver'
 
-
 module GCoder
+  class GeocoderError < StandardError; end
+  class NotImplementedError < StandardError; end
+  class TimeoutError < StandardError; end
 
-  module Errors
-    class Error < StandardError; end
-    class MalformedQueryError < Error; end
-    class BlankRequestError < Error; end
-    class RequestTimeoutError < Error; end
-    class NoAPIKeyError < Error; end
-    class APIMalformedRequestError < Error; end
-    class APIGeocodingError < Error; end
-    class TTUnableToConnectError < Error; end
-    class InvalidStorageValueError < Error; end
-    class UnknownFormatSymbolError < Error; end
+  DEFAULT_CONFIG = {
+    :api_key      => nil,
+    :timeout      => 2,
+    :append       => nil,
+    :country      => nil,
+    :adapter      => :heap,
+    :adapter_opts => nil
+  }.freeze
+
+  def self.config
+    @config ||= DEFAULT_CONFIG.dup
   end
 
-
-  module ProxyMethods
-    def GCoder.config=(hsh)
-      Config.update(hsh)
-    end
-
-    def GCoder.connect(options = {})
-      Resolver.new(options)
-    end
+  def self.connect(options = {})
+    Resolver.new(options)
   end
-
 end

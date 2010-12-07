@@ -1,58 +1,48 @@
-require 'rubygems'
-require 'rake'
-
-
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |g|
-    g.name = 'gcoder'
-    g.summary = 'A library for geocoding stuff through the Google Maps ' \
-      'Geocoding API with a persisted cache via Tokyo Tyrant.'
-    g.email = 'heycarsten@gmail.com'
-    g.homepage = 'http://github.com/heycarsten/gcoder'
-    g.authors = ['Carsten Nielsen']
-  end
-rescue LoadError
-  puts 'Jeweler not available. Install it with: sudo gem install ' \
-    'technicalpickles-jeweler -s http://gems.github.com'
-end
-
-
+require 'rubygems/specification' unless defined?(Gem::Specification)
+require 'rake/gempackagetask'
 require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/*_test.rb'
-  test.verbose = true
-end
 
-
-begin
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new do |test|
-    test.libs << 'test'
-    test.pattern = 'test/**/*_test.rb'
-    test.verbose = true
-  end
-rescue LoadError
-  task :rcov do
-    abort 'RCov is not available. In order to run rcov, you must: sudo gem ' \
-      'install spicycode-rcov'
+def gemspec
+  @gemspec ||= begin
+    Gem::Specification.load(File.expand_path('gcoder.gemspec'))
   end
 end
 
+task :default => :spec
 
-task :default => :test
+desc 'Start an irb console'
+task :console do
+  system 'irb -I lib -r lcbo'
+end
 
-# require 'rake/rdoctask'
-# Rake::RDocTask.new do |rdoc|
-#   if File.exist?('VERSION.yml')
-#     config = YAML.load(File.read('VERSION.yml'))
-#     version = [config[:major], config[:minor], config[:patch]].join('.')
-#   else
-#     version = ''
-#   end
-#   rdoc.rdoc_dir = 'rdoc'
-#   rdoc.title = "GCoder #{version}"
-#   rdoc.rdoc_files.include('README*')
-#   rdoc.rdoc_files.include('lib/**/*.rb')
-# end
+desc 'Validates the gemspec'
+task :gemspec do
+  gemspec.validate
+end
+
+desc 'Displays the current version'
+task :version do
+  puts "Current version: #{gemspec.version}"
+end
+
+desc 'Installs the gem locally'
+task :install => :package do
+  sh "gem install pkg/#{gemspec.name}-#{gemspec.version}"
+end
+
+desc 'Release the gem'
+task :release => :package do
+  sh "gem push pkg/#{gemspec.name}-#{gemspec.version}.gem"
+end
+
+Rake::GemPackageTask.new(gemspec) do |pkg|
+  pkg.gem_spec = gemspec
+end
+task :gem => :gemspec
+task :package => :gemspec
+
+Rake::TestTask.new(:spec) do |t|
+  t.libs += %w[gcoder spec]
+  t.test_files = FileList['spec/**/*.rb']
+  t.verbose = true
+end
