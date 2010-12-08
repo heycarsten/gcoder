@@ -12,7 +12,7 @@ task :default => :spec
 
 desc 'Start an irb console'
 task :console do
-  system 'irb -I lib -r lcbo'
+  system 'irb -I lib -r gcoder'
 end
 
 desc 'Validates the gemspec'

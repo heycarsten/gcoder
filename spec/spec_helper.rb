@@ -6,55 +6,89 @@ MiniTest::Unit.autorun
 unless defined? SpecHelper
   module SpecHelper
     PAYLOADS = {
-      :json_m6r2g5 => <<-JSON
-{
-"name": "M6R2G5",
-"Status": {
-  "code": 200,
-  "request": "geocode"
-},
-"Placemark": [ {
-  "id": "p1",
-  "address": "Ontario M6R 2G5, Canada",
-  "AddressDetails": {"Country": {"CountryNameCode": "CA","CountryName": "Canada","AdministrativeArea": {"AdministrativeAreaName": "ON","PostalCode": {"PostalCodeNumber": "M6R 2G5"}}},"Accuracy": 5},
-  "ExtendedData": {
-    "LatLonBox": {
-      "north": 43.6536126,
-      "south": 43.6473174,
-      "east": -79.4418244,
-      "west": -79.4481196
+      'http://maps.google.com/maps/geo?q=queen+and+spadina&output=json&oe=utf8&sensor=false&key=&region=ca' => %q<
+        {
+          "name": "queen and spadina",
+          "Status": {
+            "code": 200,
+            "request": "geocode"
+          },
+          "Placemark": [ {
+            "id": "p1",
+            "address": "Spadina Ave \u0026 Queen St W, Toronto, ON M5V, Canada",
+            "AddressDetails": {
+           "Accuracy" : 7,
+           "Country" : {
+              "AdministrativeArea" : {
+                 "AdministrativeAreaName" : "ON",
+                 "SubAdministrativeArea" : {
+                    "Locality" : {
+                       "LocalityName" : "Toronto",
+                       "Thoroughfare" : {
+                          "ThoroughfareName" : "Spadina Ave & Queen St W"
+                       }
+                    },
+                    "SubAdministrativeAreaName" : "Toronto Division"
+                 }
+              },
+              "CountryName" : "Canada",
+              "CountryNameCode" : "CA"
+           }
+        },
+            "ExtendedData": {
+              "LatLonBox": {
+                "north": 43.6519082,
+                "south": 43.6456130,
+                "east": -79.3930939,
+                "west": -79.3993891
+              }
+            },
+            "Point": {
+              "coordinates": [ -79.3962415, 43.6487606, 0 ]
+            }
+          }, {
+            "id": "p2",
+            "address": "Spadina Crescent E \u0026 Queen St, Saskatoon, SK S7K 0N2, Canada",
+            "AddressDetails": {
+           "Accuracy" : 7,
+           "Country" : {
+              "AdministrativeArea" : {
+                 "AdministrativeAreaName" : "SK",
+                 "SubAdministrativeArea" : {
+                    "Locality" : {
+                       "LocalityName" : "Saskatoon",
+                       "PostalCode" : {
+                          "PostalCodeNumber" : "S7K 0N2"
+                       },
+                       "Thoroughfare" : {
+                          "ThoroughfareName" : "Spadina Crescent E & Queen St"
+                       }
+                    },
+                    "SubAdministrativeAreaName" : "Division No. 11"
+                 }
+              },
+              "CountryName" : "Canada",
+              "CountryNameCode" : "CA"
+           }
+        },
+            "ExtendedData": {
+              "LatLonBox": {
+                "north": 52.1397143,
+                "south": 52.1334191,
+                "east": -106.6442669,
+                "west": -106.6505621
+              }
+            },
+            "Point": {
+              "coordinates": [ -106.6474145, 52.1365667, 0 ]
+            }
+          } ]
+        }
+      >
     }
-  },
-  "Point": {
-    "coordinates": [ -79.4449720, 43.6504650, 0 ]
-  }
-} ]
-}
-JSON
-,
-      :json_602 => <<-JSON
-{
-  "name": "crashbangboom",
-  "Status": {
-    "code": 602,
-    "request": "geocode"
-  }
-}
-JSON
-,
-      :json_400 => <<-JSON
-{
-  "name": "",
-  "Status": {
-    "code": 400,
-    "request": "geocode"
-  }
-}
-JSON
-,
-      :test_string => "test\nstring",
-      :test_hash => { 'test' => 'value', 100 => 'one hundred' },
-      :test_array => ['test', 1, 3.1415, true, false, nil]
-    }
+
+    PAYLOADS.each_pair do |uri, body|
+      GCoder::Geocoder::Request.stub(uri, body)
+    end
   end
 end

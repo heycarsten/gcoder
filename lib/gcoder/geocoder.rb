@@ -10,37 +10,61 @@ module GCoder
       :key => nil }
 
     def self.get(query, options = {})
-      response = new(query, options).get
-      response.validate!
-      response.to_h
+      Request.new(query, options).get.to_hash
+    end
+
+    module Utils
+      # URI escape, snaked from Rack::Utils.
+      def self.u(string)
+        string.to_s.gsub(/([^ a-zA-Z0-9_.-]+)/n) {
+          '%' + $1.unpack('H2' * $1.size).join('%').upcase
+        }.tr(' ', '+')
+      end
+
+      def self.to_params(hsh)
+        hsh.map { |key, value| "#{u key}=#{u value}" }.join('&')
+      end
+
+      def self.bounds_to_q(bounds)
+        bounds.map { |point| point.join(',') }.join('|')
+      end
     end
 
     class Request
       def initialize(query, options = {})
         unless query
-          raise Errors::BlankRequestError, "query cannot be nil"
+          raise GeocoderError, "query cannot be nil"
         end
         unless query.is_a?(String)
-          raise Errors::MalformedQueryError, "query must be String, not: #{query.class}"
+          raise GeocoderError, "query must be String, not: #{query.class}"
+        end
+        if '' == query.strip
+          raise GeocoderError, 'You must specifiy a query to resolve.'
         end
         @config = GCoder.config.merge(options)
         @query = query
-        validate_state!
+      end
+
+      def self.stubs
+        @stubs ||= {}
+      end
+
+      def self.stub(uri, body)
+        stubs[uri] = body
       end
 
       def params
         BASE_PARAMS.dup.tap do |p|
-          p[:key] = @config[:api_key]
-          p[:q]   = query
-          p[:gl]  = @config[:country] if @config[:country]
+          p[:key]    = @config[:api_key] if @config[:api_key]
+          p[:q]      = query
+          p[:region] = @config[:region] if @config[:region]
+          p[:bounds] = Utils.bounds_to_q(@config[:bounds]) if @config[:bounds]
           p
         end
       end
 
       def to_params
-        @to_params ||= begin
-          params.map { |k, v| "#{uri_escape(k)}=#{uri_escape(v)}" }.join('&')
-        end
+        Utils.to_params(params)
       end
 
       def query
@@ -48,65 +72,40 @@ module GCoder
       end
 
       def uri
-        [BASE_URI, '?', to_params].join
+        "#{BASE_URI}?#{to_params}"
       end
 
       def get
-        return @json_response if @json_response
         Timeout.timeout(@config[:timeout]) do
-          Response.new(self)
+          Response.new(uri, (self.class.stubs[uri] || open(uri).read))
         end
       rescue Timeout::Error
         raise TimeoutError, "Query timeout after #{@config[:timeout]} second(s)"
       end
-
-      def http_get
-        open(uri).read
-      end
-
-      protected
-
-      # Snaked from Rack::Utils which 'stole' it from Camping.
-      def uri_escape(string)
-        string.to_s.gsub(/([^ a-zA-Z0-9_.-]+)/n) do
-          '%' + $1.unpack('H2' * $1.size).join('%').upcase
-        end.tr(' ', '+')
-      end
-
-      def validate_state!
-        if '' == query.strip.to_s
-          raise Errors::GeocoderError, 'You must specifiy a query to resolve.'
-        end
-        unless @config[:api_key]
-          raise Errors::GeocoderError, 'You must provide a Google Maps API ' \
-          'key in your configuration. Go to http://code.google.com/apis/maps/' \
-          'signup.html to get one.'
-        end
-      end
-
     end
 
-
     class Response
-      def initialize(request)
-        @request = request
-        @response = JSON.parse(@request.http_get)
+      def initialize(uri, body)
+        @uri      = uri
+        @body     = body
+        @response = JSON.parse(@body)
+        validate
       end
 
       def status
         @response['Status']['code']
       end
 
-      def validate!
+      def validate
         case status
         when 400
           raise GeocoderError, 'The GMaps Geo API has ' \
           'indicated that the request is not formed correctly: ' \
-          "(#{@request.uri})\n\n#{@request.inspect}"
+          "(#{@uri})\n\n#{@body}"
         when 602
           raise GeocoderError, 'The GMaps Geo API has indicated ' \
-          "that it is not able to geocode the request: (#{@request.uri})" \
-          "\n\n#{@request.inspect}"
+          "that it is not able to geocode the request: (#{@uri})" \
+          "\n\n#{@body}"
         end
       end
 
@@ -190,9 +189,7 @@ module GCoder
       def placemark
         (p = @response['Placemark']) ? p[0] : {}
       end
-
     end
-
 
   end
 end

@@ -1,74 +1,52 @@
-require 'test_helper'
+require 'spec_helper'
 
+describe GCoder::Geocoder do
+  it 'should fail when asked to resolve nil' do
+    -> { GCoder::Geocoder.get(nil) }.must_raise GCoder::GeocoderError
+  end
 
-class GeocodingAPITest < Test::Unit::TestCase
+  it 'should fail when asked to resolve a blank string' do
+    -> { GCoder::Geocoder.get('')  }.must_raise GCoder::GeocoderError
+    -> { GCoder::Geocoder.get(' ') }.must_raise GCoder::GeocoderError
+  end
 
-  context 'initialize with incorrect arguments' do
-    should 'fail with no arguments' do
-      assert_raise ArgumentError do
-        GCoder::GeocodingAPI::Request.new
-      end
+  it 'should geocode queries' do
+    @geo = GCoder::Geocoder.get('queen and spadina', :region => :ca)
+    @geo.must_be_instance_of Hash
+    @geo[:accuracy].must_equal 7
+    @geo[:point][:latitude].must_be_close_to 43.6487606
+    @geo[:point][:longitude].must_be_close_to -79.3962415
+  end
+end
+
+describe GCoder::Geocoder::Utils do
+  describe '#u' do
+    before do
+      @q = GCoder::Geocoder::Utils.u('hello world')
     end
 
-    should 'fail with any argument other than a string' do
-      assert_raise GCoder::Errors::BlankRequestError do
-        GCoder::GeocodingAPI::Request.new(nil)
-      end
-      assert_raise GCoder::Errors::MalformedQueryError do
-        GCoder::GeocodingAPI::Request.new(0)
-      end
-    end
-
-    should 'fail when passed a blank string as an argument' do
-      assert_raise GCoder::Errors::BlankRequestError do
-        GCoder::GeocodingAPI::Request.new('         ')
-      end
+    it 'should URI encode the string' do
+      @q.must_equal 'hello+world'
     end
   end
 
-  context 'initialize with no API key present' do
-    should 'fall down, go boom' do
-      assert_raise GCoder::Errors::NoAPIKeyError do
-        GCoder::GeocodingAPI::Request.new('M6R2G5')
-      end
+  describe '#to_params' do
+    before do
+      @q = GCoder::Geocoder::Utils.to_params(:q => 'hello world', :a => 'test')
+    end
+
+    it 'should create a query string' do
+      @q.must_equal 'q=hello+world&a=test'
     end
   end
 
-  context 'query with correct arguments' do
-    setup do
-      @zip = GCoder::GeocodingAPI::Request.new('M6R2G5',
-        :gmaps_api_key => 'apikey')
+  describe '#bounds_to_q' do
+    before do
+      @q = GCoder::Geocoder::Utils.bounds_to_q([[1, 2], [3, 4]])
     end
 
-    should 'return parsed and tidied JSON' do
-      @zip.expects(:http_get).returns(PAYLOADS[:json_m6r2g5])
-      response = @zip.get.to_h
-      assert_equal 5, response[:accuracy]
-      assert_equal 'Canada', response[:country][:name]
-      assert_equal 'CA', response[:country][:code]
-      assert_equal 'ON', response[:country][:administrative_area]
-      assert_equal 43.6504650, response[:point][:latitude]
-      assert_equal -79.4449720, response[:point][:longitude]
-      assert_equal 43.6536126, response[:box][:north]
-      assert_equal 43.6473174, response[:box][:south]
-      assert_equal -79.4418244, response[:box][:east]
-      assert_equal -79.4481196, response[:box][:west]
-    end
-
-    should 'raise an error when API returns malformed request' do
-      @zip.expects(:http_get).returns(PAYLOADS[:json_400])
-      assert_raise GCoder::Errors::APIMalformedRequestError do
-        @zip.get.validate!
-      end
-    end
-
-    should 'have an appropriate URI' do
-      assert_match /output=json/, @zip.uri
-      assert_match /q=M6R2G5/, @zip.uri
-      assert_match /oe=u/, @zip.uri
-      assert_match /sensor=false/, @zip.uri
-      assert_match /key=apikey/, @zip.uri
+    it 'should join the coordinates appropriately' do
+      @q.must_equal '1,2|3,4'
     end
   end
-
 end

@@ -3,8 +3,8 @@ module GCoder
 
     def initialize(opts = {})
       @config = GCoder.config.merge(opts)
-      if (adapter_name = @config[:adapter])
-        @conn = Adapters[adapter_name].new(@config)
+      if (adapter_name = @config[:storage])
+        @conn = Storage[adapter_name].new(@config[:storage_config])
       else
         @conn = nil
       end
@@ -34,22 +34,13 @@ module GCoder
 
     def get(query)
       return nil unless @conn
-      @conn.get(nkey(key))
+      @conn.get(query)
     end
 
     def set(key, value)
-      val = nval(value)
-      return val unless @conn
-      @conn.set(nkey(key), val)
-      val
-    end
-
-    def nval(value)
-      value.to_s
-    end
-
-    def nkey(key)
-      Digest::SHA1.hexdigest(key.to_s)
+      return value unless @conn
+      @conn.set(key, value)
+      value
     end
 
   end

@@ -1,5 +1,5 @@
 module GCoder
-  module Adapters
+  module Storage
 
     def self.adapters
       @adapters ||= {}
@@ -15,7 +15,7 @@ module GCoder
 
     class Adapter
       def initialize(opts = {})
-        @config = GCoder.config.merge(opts).tap { |c| cfg[:adapter_opts] || {} }
+        @config = (opts || {})
         connect
       end
 
@@ -35,10 +35,21 @@ module GCoder
         raise NotImplementedError, 'This adapter needs to implement #get'
       end
 
-      def set(key, value)
+      def set(key, val)
         raise NotImplementedError, 'This adapter needs to implement #set'
       end
+
+      protected
+
+      def nval(value)
+        value.to_s
+      end
+
+      def nkey(key)
+        Digest::SHA1.hexdigest(key.to_s.downcase)
+      end
     end
+
 
     class HeapAdapter < Adapter
       def connect
@@ -50,33 +61,42 @@ module GCoder
       end
 
       def get(key)
-        @heap[key]
+        @heap[nkey(key)]
       end
 
       def set(key, value)
-        @heap[key] = value
+        @heap[nkey(key)] = nval(value)
       end
     end
 
+
     class RedisAdapter < Adapter
       def connect
-        @rdb = config[:redis] ? Redis.connect(config[:redis]) : Redis.connect
+        require 'redis'
+        @rdb = Redis.connect(*[config[:connection]].compact)
+        @keyspace = "#{config[:keyspace] || 'gcoder'}:"
       end
 
       def clear
-        @rdb.del(*@rdb.keys("gcoder:*"))
+        @rdb.keys(@keyspace + '*').each { |key| @rdb.del(key) }
       end
 
       def get(key)
-        @rdb.get(key)
+        @rdb.get(keyns(key))
       end
 
       def set(key, value)
-        if (ttl = config[:cache_ttl])
-          @rdb.setex(key, ttl, value)
+        if (ttl = config[:key_ttl])
+          @rdb.setex(keyns(key), ttl, nval(value))
         else
-          @rdb.set(key, value)
+          @rdb.set(keyns(key), nval(value))
         end
+      end
+
+      private
+
+      def keyns(key)
+        "#{@keyspace}#{nkey(key)}"
       end
     end
 

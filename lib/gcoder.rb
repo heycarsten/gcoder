@@ -1,13 +1,13 @@
-require 'redis'
 require 'json'
 require 'open-uri'
 require 'timeout'
+require 'digest/sha1'
 
 $:.unshift(File.dirname(__FILE__))
 
 require 'gcoder/version'
 require 'gcoder/geocoder'
-require 'gcoder/adapters'
+require 'gcoder/storage'
 require 'gcoder/resolver'
 
 module GCoder
@@ -16,12 +16,13 @@ module GCoder
   class TimeoutError < StandardError; end
 
   DEFAULT_CONFIG = {
-    :api_key      => nil,
-    :timeout      => 2,
-    :append       => nil,
-    :country      => nil,
-    :adapter      => :heap,
-    :adapter_opts => nil
+    :api_key        => nil,
+    :timeout        => 5,
+    :append         => nil,
+    :region         => nil,
+    :bounds         => nil,
+    :storage        => nil,
+    :storage_config => nil
   }.freeze
 
   def self.config
