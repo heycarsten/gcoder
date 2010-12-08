@@ -5,6 +5,7 @@ results somewhere, if you want. _(Need something more bulldozer-like? Check out
 [Geokit](http://github.com/andre/geokit-gem).)_
 
     # Bon Usage
+
     require 'gcoder'
 
     G = GCoder.connect(:storage => :heap)
@@ -13,7 +14,7 @@ results somewhere, if you want. _(Need something more bulldozer-like? Check out
     G[[41.87, -74.16]]                       # ... and reverse-geocodes!
 
 The returned value is the 'results' portion of the Google Geocoding API
-response.
+[response](http://code.google.com/apis/maps/documentation/geocoding/#JSON).
 
 ## Configuration Options
 
