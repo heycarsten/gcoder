@@ -10,19 +10,20 @@ describe GCoder::Geocoder do
     -> { GCoder::Geocoder.get(' ') }.must_raise GCoder::GeocoderError
   end
 
-  it 'should geocode queries' do
+  it 'should geocode addresses' do
     @geo = GCoder::Geocoder.get('queen and spadina', :region => :ca)
     @geo.must_be_instance_of Hash
-    @geo[:accuracy].must_equal 7
-    @geo[:point][:latitude].must_be_close_to 43.6487606
-    @geo[:point][:longitude].must_be_close_to -79.3962415
+    @geo[:results].first.tap do |r|
+      r[:geometry][:location][:lng].must_be_close_to -79.3962415
+      r[:geometry][:location][:lat].must_be_close_to 43.6487606
+    end
   end
 end
 
-describe GCoder::Geocoder::Utils do
-  describe '#u' do
+describe GCoder::Geocoder::Request do
+  describe '::u' do
     before do
-      @q = GCoder::Geocoder::Utils.u('hello world')
+      @q = GCoder::Geocoder::Request.u('hello world')
     end
 
     it 'should URI encode the string' do
@@ -30,23 +31,23 @@ describe GCoder::Geocoder::Utils do
     end
   end
 
-  describe '#to_params' do
+  describe '::to_query' do
     before do
-      @q = GCoder::Geocoder::Utils.to_params(:q => 'hello world', :a => 'test')
+      @q = GCoder::Geocoder::Request.to_query(:q => 'hello world', :a => 'test')
     end
 
     it 'should create a query string' do
       @q.must_equal 'q=hello+world&a=test'
     end
   end
+end
 
-  describe '#bounds_to_q' do
-    before do
-      @q = GCoder::Geocoder::Utils.bounds_to_q([[1, 2], [3, 4]])
-    end
-
-    it 'should join the coordinates appropriately' do
-      @q.must_equal '1,2|3,4'
+describe GCoder::Geocoder::Response do
+  describe '::symkeys' do
+    it 'should symbolize hash keys' do
+      inhsh  = { 'this' => 'is', 'a' => { 'hash' => 'yay' } }
+      outhsh = GCoder::Geocoder::Response.symkeys(inhsh)
+      outhsh.must_equal({ :this => 'is', :a => { :hash => 'yay' } })
     end
   end
 end

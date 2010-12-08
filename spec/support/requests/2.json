@@ -1,0 +1,364 @@
+{
+  "status": "OK",
+  "results": [ {
+    "types": [ "street_address" ],
+    "formatted_address": "378 Queen St W, Toronto, ON M5V 2A5, Canada",
+    "address_components": [ {
+      "long_name": "378",
+      "short_name": "378",
+      "types": [ "street_number" ]
+    }, {
+      "long_name": "Queen St W",
+      "short_name": "Queen St W",
+      "types": [ "route" ]
+    }, {
+      "long_name": "Toronto",
+      "short_name": "Toronto",
+      "types": [ "locality", "political" ]
+    }, {
+      "long_name": "Toronto Division",
+      "short_name": "Toronto Division",
+      "types": [ "administrative_area_level_2", "political" ]
+    }, {
+      "long_name": "Ontario",
+      "short_name": "ON",
+      "types": [ "administrative_area_level_1", "political" ]
+    }, {
+      "long_name": "Canada",
+      "short_name": "CA",
+      "types": [ "country", "political" ]
+    }, {
+      "long_name": "M5V 2A5",
+      "short_name": "M5V 2A5",
+      "types": [ "postal_code" ]
+    } ],
+    "geometry": {
+      "location": {
+        "lat": 43.6489064,
+        "lng": -79.3962669
+      },
+      "location_type": "ROOFTOP",
+      "viewport": {
+        "southwest": {
+          "lat": 43.6457588,
+          "lng": -79.3994145
+        },
+        "northeast": {
+          "lat": 43.6520540,
+          "lng": -79.3931193
+        }
+      }
+    }
+  }, {
+    "types": [ "postal_code" ],
+    "formatted_address": "Toronto, ON M5V 0A5, Canada",
+    "address_components": [ {
+      "long_name": "M5V 0A5",
+      "short_name": "M5V 0A5",
+      "types": [ "postal_code" ]
+    }, {
+      "long_name": "Toronto",
+      "short_name": "Toronto",
+      "types": [ "locality", "political" ]
+    }, {
+      "long_name": "Toronto Division",
+      "short_name": "Toronto Division",
+      "types": [ "administrative_area_level_2", "political" ]
+    }, {
+      "long_name": "Ontario",
+      "short_name": "ON",
+      "types": [ "administrative_area_level_1", "political" ]
+    }, {
+      "long_name": "Canada",
+      "short_name": "CA",
+      "types": [ "country", "political" ]
+    } ],
+    "geometry": {
+      "location": {
+        "lat": 43.6475910,
+        "lng": -79.3923810
+      },
+      "location_type": "APPROXIMATE",
+      "viewport": {
+        "southwest": {
+          "lat": 43.6444434,
+          "lng": -79.3955286
+        },
+        "northeast": {
+          "lat": 43.6507386,
+          "lng": -79.3892334
+        }
+      }
+    }
+  }, {
+    "types": [ "postal_code" ],
+    "formatted_address": "Toronto, ON M5V 1A1, Canada",
+    "address_components": [ {
+      "long_name": "M5V",
+      "short_name": "M5V",
+      "types": [ "postal_code" ]
+    }, {
+      "long_name": "Toronto",
+      "short_name": "Toronto",
+      "types": [ "locality", "political" ]
+    }, {
+      "long_name": "Toronto Division",
+      "short_name": "Toronto Division",
+      "types": [ "administrative_area_level_2", "political" ]
+    }, {
+      "long_name": "Ontario",
+      "short_name": "ON",
+      "types": [ "administrative_area_level_1", "political" ]
+    }, {
+      "long_name": "Canada",
+      "short_name": "CA",
+      "types": [ "country", "political" ]
+    }, {
+      "long_name": "M5V 1A1",
+      "short_name": "M5V 1A1",
+      "types": [ "postal_code" ]
+    } ],
+    "geometry": {
+      "location": {
+        "lat": 43.6289467,
+        "lng": -79.3944199
+      },
+      "location_type": "APPROXIMATE",
+      "viewport": {
+        "southwest": {
+          "lat": 43.6118009,
+          "lng": -79.4141832
+        },
+        "northeast": {
+          "lat": 43.6510137,
+          "lng": -79.3740776
+        }
+      },
+      "bounds": {
+        "southwest": {
+          "lat": 43.6118009,
+          "lng": -79.4141832
+        },
+        "northeast": {
+          "lat": 43.6510137,
+          "lng": -79.3740776
+        }
+      }
+    }
+  }, {
+    "types": [ "neighborhood", "political" ],
+    "formatted_address": "Queen Street West, Toronto, ON, Canada",
+    "address_components": [ {
+      "long_name": "Queen Street West",
+      "short_name": "Queen Street West",
+      "types": [ "neighborhood", "political" ]
+    }, {
+      "long_name": "Toronto",
+      "short_name": "Toronto",
+      "types": [ "locality", "political" ]
+    }, {
+      "long_name": "Toronto",
+      "short_name": "Toronto",
+      "types": [ "administrative_area_level_2", "political" ]
+    }, {
+      "long_name": "Ontario",
+      "short_name": "ON",
+      "types": [ "administrative_area_level_1", "political" ]
+    }, {
+      "long_name": "Canada",
+      "short_name": "CA",
+      "types": [ "country", "political" ]
+    } ],
+    "geometry": {
+      "location": {
+        "lat": 43.6405312,
+        "lng": -79.4422593
+      },
+      "location_type": "APPROXIMATE",
+      "viewport": {
+        "southwest": {
+          "lat": 43.6296630,
+          "lng": -79.4919690
+        },
+        "northeast": {
+          "lat": 43.6613770,
+          "lng": -79.3612400
+        }
+      },
+      "bounds": {
+        "southwest": {
+          "lat": 43.6296630,
+          "lng": -79.4919690
+        },
+        "northeast": {
+          "lat": 43.6613770,
+          "lng": -79.3612400
+        }
+      }
+    }
+  }, {
+    "types": [ "administrative_area_level_2", "political" ],
+    "formatted_address": "Toronto Division, Ontario, Canada",
+    "address_components": [ {
+      "long_name": "Toronto Division",
+      "short_name": "Toronto Division",
+      "types": [ "administrative_area_level_2", "political" ]
+    }, {
+      "long_name": "Ontario",
+      "short_name": "ON",
+      "types": [ "administrative_area_level_1", "political" ]
+    }, {
+      "long_name": "Canada",
+      "short_name": "CA",
+      "types": [ "country", "political" ]
+    } ],
+    "geometry": {
+      "location": {
+        "lat": 43.6689775,
+        "lng": -79.2902133
+      },
+      "location_type": "APPROXIMATE",
+      "viewport": {
+        "southwest": {
+          "lat": 43.4582970,
+          "lng": -79.6392190
+        },
+        "northeast": {
+          "lat": 43.8554580,
+          "lng": -79.0024810
+        }
+      },
+      "bounds": {
+        "southwest": {
+          "lat": 43.4582970,
+          "lng": -79.6392190
+        },
+        "northeast": {
+          "lat": 43.8554580,
+          "lng": -79.0024810
+        }
+      }
+    }
+  }, {
+    "types": [ "locality", "political" ],
+    "formatted_address": "Toronto, ON, Canada",
+    "address_components": [ {
+      "long_name": "Toronto",
+      "short_name": "Toronto",
+      "types": [ "locality", "political" ]
+    }, {
+      "long_name": "Toronto Division",
+      "short_name": "Toronto Division",
+      "types": [ "administrative_area_level_2", "political" ]
+    }, {
+      "long_name": "Ontario",
+      "short_name": "ON",
+      "types": [ "administrative_area_level_1", "political" ]
+    }, {
+      "long_name": "Canada",
+      "short_name": "CA",
+      "types": [ "country", "political" ]
+    } ],
+    "geometry": {
+      "location": {
+        "lat": 43.6525000,
+        "lng": -79.3816667
+      },
+      "location_type": "APPROXIMATE",
+      "viewport": {
+        "southwest": {
+          "lat": 43.4582970,
+          "lng": -79.6392190
+        },
+        "northeast": {
+          "lat": 43.8554580,
+          "lng": -79.0024810
+        }
+      },
+      "bounds": {
+        "southwest": {
+          "lat": 43.4582970,
+          "lng": -79.6392190
+        },
+        "northeast": {
+          "lat": 43.8554580,
+          "lng": -79.0024810
+        }
+      }
+    }
+  }, {
+    "types": [ "administrative_area_level_1", "political" ],
+    "formatted_address": "Ontario, Canada",
+    "address_components": [ {
+      "long_name": "Ontario",
+      "short_name": "ON",
+      "types": [ "administrative_area_level_1", "political" ]
+    }, {
+      "long_name": "Canada",
+      "short_name": "CA",
+      "types": [ "country", "political" ]
+    } ],
+    "geometry": {
+      "location": {
+        "lat": 51.2537750,
+        "lng": -85.3232139
+      },
+      "location_type": "APPROXIMATE",
+      "viewport": {
+        "southwest": {
+          "lat": 41.6765560,
+          "lng": -95.1562270
+        },
+        "northeast": {
+          "lat": 56.9313930,
+          "lng": -74.3206480
+        }
+      },
+      "bounds": {
+        "southwest": {
+          "lat": 41.6765560,
+          "lng": -95.1562270
+        },
+        "northeast": {
+          "lat": 56.9313930,
+          "lng": -74.3206480
+        }
+      }
+    }
+  }, {
+    "types": [ "country", "political" ],
+    "formatted_address": "Canada",
+    "address_components": [ {
+      "long_name": "Canada",
+      "short_name": "CA",
+      "types": [ "country", "political" ]
+    } ],
+    "geometry": {
+      "location": {
+        "lat": 56.1303660,
+        "lng": -106.3467710
+      },
+      "location_type": "APPROXIMATE",
+      "viewport": {
+        "southwest": {
+          "lat": 41.6763279,
+          "lng": -141.0027250
+        },
+        "northeast": {
+          "lat": 83.6381000,
+          "lng": -50.9766000
+        }
+      },
+      "bounds": {
+        "southwest": {
+          "lat": 41.6763279,
+          "lng": -141.0027250
+        },
+        "northeast": {
+          "lat": 83.6381000,
+          "lng": -50.9766000
+        }
+      }
+    }
+  } ]
+}

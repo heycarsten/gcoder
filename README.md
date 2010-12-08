@@ -1,16 +1,14 @@
 # GCoder
 
-GCoder geocodes stuff using the Google Maps Geocoding API and caches the
-results somewhere, if you want. Sign up
-[here](http://code.google.com/apis/maps/signup.html) to get an API key for the
-Google Maps API. _Are you looking for something more bulldozer-like? Check out
-[Geokit](http://github.com/andre/geokit-gem)._
+GCoder geocodes stuff using the Google Geocoding API (V3) and caches the
+results somewhere, if you want. _Are you looking for something more
+bulldozer-like? Check out [Geokit](http://github.com/andre/geokit-gem)._
 
 ## Bon Usage
 
     require 'gcoder'
 
-    G = GCoder.connect(:region => :ca, :append  => 'Ontario Canada')
+    G = GCoder.connect(:region => :ca, :append => 'Ontario Canada')
 
     G['dundas and sorauren']
 
@@ -28,10 +26,6 @@ Google Maps API. _Are you looking for something more bulldozer-like? Check out
 These can be applied globally by setting `GCoder.config` or on a per-connection
 basis by passing them to `GCoder.connect`.
 
-### `:api_key`
-
-Google Maps API key, not required.
-
 ### `:append`
 
 Specifies a string to append to the end of all queries.
@@ -40,6 +34,12 @@ Specifies a string to append to the end of all queries.
 
 Tells the Geocoder to favour results in a specific region. More info
 [here](http://code.google.com/apis/maps/documentation/geocoding/#RegionCodes).
+
+### `:language`
+
+By default this is whatever Google thinks it is, you can set it to something
+if you'd like. More info
+[here](http://code.google.com/apis/maps/documentation/geocoding/#GeocodingRequests).
 
 ### `:bounds`
 

@@ -15,8 +15,7 @@ module GCoder
     end
 
     def geocode(query, opts = {})
-      return nil if '' == query.to_s.strip
-      fetch(query + opts.to_s) do
+      fetch([query, opts].join) do
         Geocoder.get(query, opts)
       end
     end

@@ -1,48 +1,22 @@
 module GCoder
   module Geocoder
 
-    BASE_URI = 'http://maps.google.com/maps/geo'
-    BASE_PARAMS = {
-      :q => nil,
-      :output => 'json',
-      :oe => 'utf8',
-      :sensor => 'false',
-      :key => nil }
+    BASE_URI = 'http://maps.googleapis.com/maps/api/geocode/json'
+    BASE_PARAMS = { :sensor => 'false' }
 
     def self.get(query, options = {})
-      Request.new(query, options).get.to_hash
+      Request.new(query, options).get.as_hash
     end
 
-    module Utils
-      # URI escape, snaked from Rack::Utils.
+    class Request
       def self.u(string)
         string.to_s.gsub(/([^ a-zA-Z0-9_.-]+)/n) {
           '%' + $1.unpack('H2' * $1.size).join('%').upcase
         }.tr(' ', '+')
       end
 
-      def self.to_params(hsh)
-        hsh.map { |key, value| "#{u key}=#{u value}" }.join('&')
-      end
-
-      def self.bounds_to_q(bounds)
-        bounds.map { |point| point.join(',') }.join('|')
-      end
-    end
-
-    class Request
-      def initialize(query, options = {})
-        unless query
-          raise GeocoderError, "query cannot be nil"
-        end
-        unless query.is_a?(String)
-          raise GeocoderError, "query must be String, not: #{query.class}"
-        end
-        if '' == query.strip
-          raise GeocoderError, 'You must specifiy a query to resolve.'
-        end
-        @config = GCoder.config.merge(options)
-        @query = query
+      def self.to_query(params)
+        params.map { |key, val| "#{u key}=#{u val}" }.join('&')
       end
 
       def self.stubs
@@ -53,26 +27,32 @@ module GCoder
         stubs[uri] = body
       end
 
+      def initialize(query, opts = {})
+        @config = GCoder.config.merge(opts)
+        if query.is_a?(Array)
+          raise GeocoderError, 'latlng is not a pair' unless 2 == query.size
+          @latlng = query
+        else
+          raise GeocoderError, 'address is nil' unless query
+          raise GeocoderError, 'address is blank' if '' == query.to_s.strip
+          @address = query
+        end
+      end
+
       def params
         BASE_PARAMS.dup.tap do |p|
-          p[:key]    = @config[:api_key] if @config[:api_key]
-          p[:q]      = query
-          p[:region] = @config[:region] if @config[:region]
-          p[:bounds] = Utils.bounds_to_q(@config[:bounds]) if @config[:bounds]
+          p[:key]      = @config[:api_key]  if @config[:api_key]
+          p[:address]  = address            if @address
+          p[:latlng]   = latlng             if @latlng
+          p[:language] = @config[:language] if @config[:language]
+          p[:region]   = @config[:region]   if @config[:region]
+          p[:bounds]   = bounds             if @config[:bounds]
           p
         end
       end
 
-      def to_params
-        Utils.to_params(params)
-      end
-
-      def query
-        @config[:append] ? "#{@query} #{@config[:append]}" : @query
-      end
-
       def uri
-        "#{BASE_URI}?#{to_params}"
+        "#{BASE_URI}?#{self.class.to_query(params)}"
       end
 
       def get
@@ -82,112 +62,82 @@ module GCoder
       rescue Timeout::Error
         raise TimeoutError, "Query timeout after #{@config[:timeout]} second(s)"
       end
+
+      private
+
+      def latlng
+        @latlng.join(',')
+      end
+
+      def bounds
+        @config[:bounds].map { |point| point.join(',') }.join('|')
+      end
+
+      def address
+        @config[:append] ? "#{@address} #{@config[:append]}" : @address
+      end
     end
 
+
     class Response
-      def initialize(uri, body)
-        @uri      = uri
-        @body     = body
-        @response = JSON.parse(@body)
-        validate
-      end
+      attr_reader :body, :uri
+      {
+        :key    => 'val',
+        :person => { :name => 'car' },
+        :list   => [1, 2, 3],
+        :hashes => [{ :a => 1}, { :b => 2}]
+      }
 
-      def status
-        @response['Status']['code']
-      end
-
-      def validate
-        case status
-        when 400
-          raise GeocoderError, 'The GMaps Geo API has ' \
-          'indicated that the request is not formed correctly: ' \
-          "(#{@uri})\n\n#{@body}"
-        when 602
-          raise GeocoderError, 'The GMaps Geo API has indicated ' \
-          "that it is not able to geocode the request: (#{@uri})" \
-          "\n\n#{@body}"
+      def self.symkeys(obj, inside = false)
+        case obj
+        when Hash
+          Hash[obj.map { |key, val| [key.to_sym, symkeys(val)] }]
+        when Array
+          obj.map do |o|
+            case o
+            when Hash  then symkeys(o)
+            when Array then symkeys(o)
+            else o
+            end
+          end
+        else
+          obj
         end
       end
 
-      def to_hash
-        { :accuracy => accuracy,
-          :country => {
-            :name => country_name,
-            :code => country_code,
-            :administrative_area => administrative_area_name },
-          :point => {
-            :longitude => longitude,
-            :latitude => latitude },
-          :box => box }
+      def initialize(uri, body)
+        @uri      = uri
+        @body     = body
+        @response = self.class.symkeys(JSON.parse(@body))
+        validate_status!
       end
 
-      def as_json
-        JSON.dump(to_hash)
+      def status
+        @response[:status]
       end
 
-      def box
-        { :north => latlon_box['north'],
-          :south => latlon_box['south'],
-          :east => latlon_box['east'],
-          :west => latlon_box['west'] }
-      end
-
-      def accuracy
-        address_details['Accuracy']
-      end
-
-      def latitude
-        coordinates[1]
-      end
-
-      def longitude
-        coordinates[0]
-      end
-
-      def country_name
-        country['CountryName']
-      end
-
-      def country_code
-        country['CountryNameCode']
-      end
-
-      def administrative_area_name
-        administrative_area['AdministrativeAreaName']
+      def as_hash
+        @response
       end
 
       private
 
-      def coordinates
-        point['coordinates'] || []
-      end
-
-      def point
-        placemark['Point'] || {}
-      end
-
-      def country
-        address_details['Country'] || {}
-      end
-
-      def administrative_area
-        country['AdministrativeArea'] || {}
-      end
-
-      def address_details
-        placemark['AddressDetails'] || {}
-      end
-
-      def latlon_box
-        extended_data['LatLonBox'] || {}
-      end
-
-      def extended_data
-        placemark['ExtendedData'] || {}
-      end
-
-      def placemark
-        (p = @response['Placemark']) ? p[0] : {}
+      def validate_status!
+        case status
+        when 'OK'
+          # All is well!
+        when 'ZERO_RESULTS'
+          raise NoResultsError, "Geocoding API returned no results: (#{@uri})"
+        when 'OVER_QUERY_LIMIT'
+          raise OverLimitError, 'Rate limit for Geocoding API exceeded!'
+        when 'REQUEST_DENIED'
+          raise GeocoderError, "Request denied by the Geocoding API: (#{@uri})"
+        when 'INVALID_REQUEST'
+          raise GeocoderError, "An invalid request was made: (#{@uri})"
+        else
+          raise GeocoderError, 'No status in Geocoding API response: ' \
+          "(#{@uri})\n\n#{@body}"
+        end
       end
     end
 

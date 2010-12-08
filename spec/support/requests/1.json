@@ -1,0 +1,96 @@
+{
+  "status": "OK",
+  "results": [ {
+    "types": [ "intersection" ],
+    "formatted_address": "Spadina Ave & Queen St W, Toronto, ON M5V, Canada",
+    "address_components": [ {
+      "long_name": "Spadina Ave",
+      "short_name": "Spadina Ave",
+      "types": [ "route" ]
+    }, {
+      "long_name": "Toronto",
+      "short_name": "Toronto",
+      "types": [ "locality", "political" ]
+    }, {
+      "long_name": "Toronto Division",
+      "short_name": "Toronto Division",
+      "types": [ "administrative_area_level_2", "political" ]
+    }, {
+      "long_name": "Ontario",
+      "short_name": "ON",
+      "types": [ "administrative_area_level_1", "political" ]
+    }, {
+      "long_name": "Canada",
+      "short_name": "CA",
+      "types": [ "country", "political" ]
+    }, {
+      "long_name": "M5V",
+      "short_name": "M5V",
+      "types": [ "postal_code" ]
+    } ],
+    "geometry": {
+      "location": {
+        "lat": 43.6487606,
+        "lng": -79.3962415
+      },
+      "location_type": "APPROXIMATE",
+      "viewport": {
+        "southwest": {
+          "lat": 43.6456130,
+          "lng": -79.3993891
+        },
+        "northeast": {
+          "lat": 43.6519082,
+          "lng": -79.3930939
+        }
+      }
+    },
+    "partial_match": true
+  }, {
+    "types": [ "intersection" ],
+    "formatted_address": "Spadina Crescent E & Queen St, Saskatoon, SK S7K 0N2, Canada",
+    "address_components": [ {
+      "long_name": "Spadina Crescent E",
+      "short_name": "Spadina Crescent E",
+      "types": [ "route" ]
+    }, {
+      "long_name": "Saskatoon",
+      "short_name": "Saskatoon",
+      "types": [ "locality", "political" ]
+    }, {
+      "long_name": "Division No. 11",
+      "short_name": "Division No. 11",
+      "types": [ "administrative_area_level_2", "political" ]
+    }, {
+      "long_name": "Saskatchewan",
+      "short_name": "SK",
+      "types": [ "administrative_area_level_1", "political" ]
+    }, {
+      "long_name": "Canada",
+      "short_name": "CA",
+      "types": [ "country", "political" ]
+    }, {
+      "long_name": "S7K 0N2",
+      "short_name": "S7K 0N2",
+      "types": [ "postal_code" ]
+    } ],
+    "geometry": {
+      "location": {
+        "lat": 52.1365667,
+        "lng": -106.6474145
+      },
+      "location_type": "APPROXIMATE",
+      "viewport": {
+        "southwest": {
+          "lat": 52.1334191,
+          "lng": -106.6505621
+        },
+        "northeast": {
+          "lat": 52.1397143,
+          "lng": -106.6442669
+        }
+      }
+    },
+    "partial_match": true
+  } ]
+}
