@@ -1,9 +1,8 @@
 module GCoder
   module Geocoder
 
-    HOST   = 'maps.googleapis.com'
-    PATH   = '/maps/api/geocode/json'
-    PARAMS = { :sensor => 'false' }
+    HOST = 'maps.googleapis.com'
+    PATH = '/maps/api/geocode/json'
 
     class Request
       def self.u(string)
@@ -30,15 +29,13 @@ module GCoder
       end
 
       def params
-        PARAMS.dup.tap do |p|
-          p[:key]      = @config[:api_key]  if @config[:api_key]
-          p[:address]  = address            if @address
-          p[:latlng]   = latlng             if @latlng
-          p[:language] = @config[:language] if @config[:language]
-          p[:region]   = @config[:region]   if @config[:region]
-          p[:bounds]   = bounds             if @config[:bounds]
-          p
-        end
+        p = { :sensor => 'false' }
+        p[:address]  = address            if @address
+        p[:latlng]   = latlng             if @latlng
+        p[:language] = @config[:language] if @config[:language]
+        p[:region]   = @config[:region]   if @config[:region]
+        p[:bounds]   = bounds             if @config[:bounds]
+        p
       end
 
       def path
