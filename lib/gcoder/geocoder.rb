@@ -1,12 +1,9 @@
 module GCoder
   module Geocoder
 
-    BASE_URI = 'http://maps.googleapis.com/maps/api/geocode/json'
-    BASE_PARAMS = { :sensor => 'false' }
-
-    def self.get(query, options = {})
-      Request.new(query, options).get.as_hash
-    end
+    HOST   = 'maps.googleapis.com'
+    PATH   = '/maps/api/geocode/json'
+    PARAMS = { :sensor => 'false' }
 
     class Request
       def self.u(string)
@@ -29,18 +26,11 @@ module GCoder
 
       def initialize(query, opts = {})
         @config = GCoder.config.merge(opts)
-        if query.is_a?(Array)
-          raise GeocoderError, 'latlng is not a pair' unless 2 == query.size
-          @latlng = query
-        else
-          raise GeocoderError, 'address is nil' unless query
-          raise GeocoderError, 'address is blank' if '' == query.to_s.strip
-          @address = query
-        end
+        detect_and_set_query(query)
       end
 
       def params
-        BASE_PARAMS.dup.tap do |p|
+        PARAMS.dup.tap do |p|
           p[:key]      = @config[:api_key]  if @config[:api_key]
           p[:address]  = address            if @address
           p[:latlng]   = latlng             if @latlng
@@ -51,19 +41,49 @@ module GCoder
         end
       end
 
+      def path
+        "#{PATH}?#{self.class.to_query(params)}"
+      end
+
       def uri
-        "#{BASE_URI}?#{self.class.to_query(params)}"
+        "http://#{HOST}#{path}"
       end
 
       def get
         Timeout.timeout(@config[:timeout]) do
-          Response.new(uri, (self.class.stubs[uri] || open(uri).read))
+          Response.new(uri, http_get)
         end
       rescue Timeout::Error
         raise TimeoutError, "Query timeout after #{@config[:timeout]} second(s)"
       end
 
       private
+
+      def detect_and_set_query(query)
+        if query.is_a?(Array)
+          case
+          when query.size != 2
+            raise BadQueryError, "Unable to geocode lat/lng pair that is not " \
+            "two elements long: #{query.inspect}"
+          when query.any? { |q| '' == q.to_s.strip }
+            raise BadQueryError, "Unable to geocode lat/lng pair with blank " \
+            "elements: #{query.inspect}"
+          else
+            @latlng = query
+          end
+        else
+          if '' == query.to_s.strip
+            raise BadQueryError, "Unable to geocode a blank query: " \
+            "#{query.inspect}"
+          else
+            @address = query
+          end
+        end
+      end
+
+      def http_get
+        self.class.stubs[uri] || Net::HTTP.get(HOST, path)
+      end
 
       def latlng
         @latlng.join(',')
@@ -81,49 +101,22 @@ module GCoder
 
     class Response
       attr_reader :body, :uri
-      {
-        :key    => 'val',
-        :person => { :name => 'car' },
-        :list   => [1, 2, 3],
-        :hashes => [{ :a => 1}, { :b => 2}]
-      }
-
-      def self.symkeys(obj, inside = false)
-        case obj
-        when Hash
-          Hash[obj.map { |key, val| [key.to_sym, symkeys(val)] }]
-        when Array
-          obj.map do |o|
-            case o
-            when Hash  then symkeys(o)
-            when Array then symkeys(o)
-            else o
-            end
-          end
-        else
-          obj
-        end
-      end
 
       def initialize(uri, body)
         @uri      = uri
         @body     = body
-        @response = self.class.symkeys(JSON.parse(@body))
+        @response = Hashie::Mash.new(JSON.parse(@body))
         validate_status!
       end
 
-      def status
-        @response[:status]
-      end
-
-      def as_hash
+      def as_mash
         @response
       end
 
       private
 
       def validate_status!
-        case status
+        case @response.status
         when 'OK'
           # All is well!
         when 'ZERO_RESULTS'

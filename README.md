@@ -1,25 +1,19 @@
 # GCoder
 
 GCoder geocodes stuff using the Google Geocoding API (V3) and caches the
-results somewhere, if you want. _Are you looking for something more
-bulldozer-like? Check out [Geokit](http://github.com/andre/geokit-gem)._
+results somewhere, if you want. _(Need something more bulldozer-like? Check out
+[Geokit](http://github.com/andre/geokit-gem).)_
 
-## Bon Usage
-
+    # Bon Usage
     require 'gcoder'
 
-    G = GCoder.connect(:region => :ca, :append => 'Ontario Canada')
+    G = GCoder.connect(:storage => :heap)
 
-    G['dundas and sorauren']
+    G['dundas and sorauren', :region => :ca] # ... it geocodes!
+    G[[41.87, -74.16]]                       # ... and reverse-geocodes!
 
-    # => {:box=>
-    # =>   {:north=>43.6543396,
-    # =>    :south=>43.6480444,
-    # =>    :east=>-79.4421004,
-    # =>    :west=>-79.4483956},
-    # =>  :point=>{:longitude=>-79.445248, :latitude=>43.651192},
-    # =>  :accuracy=>7,
-    # =>  :country=>{:administrative_area=>"ON", :code=>"CA", :name=>"Canada"}}
+The returned value is the 'results' portion of the Google Geocoding API
+response.
 
 ## Configuration Options
 
@@ -142,4 +136,8 @@ Now we can use our adapter as a caching layer by specifying it like this:
         :table_name => :locations
       }
 
-Peace!
+## Notes
+
+Tested with Ruby 1.9.2 (MRI) and nothing else, fork it. See
+[LICENSE](http://github.com/heycarsten/gcoder/blob/master/LICENSE) for details
+about that jazz.

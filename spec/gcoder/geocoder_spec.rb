@@ -1,53 +1,53 @@
 require 'spec_helper'
 
-describe GCoder::Geocoder do
-  it 'should fail when asked to resolve nil' do
-    -> { GCoder::Geocoder.get(nil) }.must_raise GCoder::GeocoderError
-  end
-
-  it 'should fail when asked to resolve a blank string' do
-    -> { GCoder::Geocoder.get('')  }.must_raise GCoder::GeocoderError
-    -> { GCoder::Geocoder.get(' ') }.must_raise GCoder::GeocoderError
-  end
-
-  it 'should geocode addresses' do
-    @geo = GCoder::Geocoder.get('queen and spadina', :region => :ca)
-    @geo.must_be_instance_of Hash
-    @geo[:results].first.tap do |r|
-      r[:geometry][:location][:lng].must_be_close_to -79.3962415
-      r[:geometry][:location][:lat].must_be_close_to 43.6487606
-    end
-  end
-end
-
 describe GCoder::Geocoder::Request do
-  describe '::u' do
-    before do
-      @q = GCoder::Geocoder::Request.u('hello world')
-    end
+  it 'should raise an error when passed nil' do
+    -> {
+      GCoder::Geocoder::Request.new(nil)
+    }.must_raise GCoder::BadQueryError
+  end
 
-    it 'should URI encode the string' do
-      @q.must_equal 'hello+world'
+  it 'should raise an error when passed a blank string' do
+    -> {
+      GCoder::Geocoder::Request.new(' ')
+    }.must_raise GCoder::BadQueryError
+  end
+
+  it 'should raise an error when passed incorrect lat/lng pair' do
+    GCoder::Geocoder::Request.tap do |req|
+      -> { req.new([])           }.must_raise GCoder::BadQueryError
+      -> { req.new([43.64])      }.must_raise GCoder::BadQueryError
+      -> { req.new([43.64, nil]) }.must_raise GCoder::BadQueryError
+      -> { req.new(['', 43.64])  }.must_raise GCoder::BadQueryError
     end
   end
 
-  describe '::to_query' do
-    before do
-      @q = GCoder::Geocoder::Request.to_query(:q => 'hello world', :a => 'test')
-    end
+  it 'should URI encode a string' do
+    GCoder::Geocoder::Request.u('hello world').must_equal 'hello+world'
+  end
 
-    it 'should create a query string' do
-      @q.must_equal 'q=hello+world&a=test'
+  it 'should create a query string' do
+    q = GCoder::Geocoder::Request.to_query(:q => 'hello world', :a => 'test')
+    q.must_equal 'q=hello+world&a=test'
+  end
+
+  it '(when passed a bounds option) should generate correct query params' do
+    GCoder::Geocoder::Request.new('q', :bounds => [[1,2], [3,4]]).tap do |req|
+      req.params[:bounds].must_equal '1,2|3,4'
     end
   end
-end
 
-describe GCoder::Geocoder::Response do
-  describe '::symkeys' do
-    it 'should symbolize hash keys' do
-      inhsh  = { 'this' => 'is', 'a' => { 'hash' => 'yay' } }
-      outhsh = GCoder::Geocoder::Response.symkeys(inhsh)
-      outhsh.must_equal({ :this => 'is', :a => { :hash => 'yay' } })
+  it '(when passed a lat/lng pair) should generate correct query params' do
+    GCoder::Geocoder::Request.new([43.64, -79.39]).tap do |req|
+      req.params[:latlng].must_equal '43.64,-79.39'
+      req.params[:address].must_be_nil
+    end
+  end
+
+  it '(when passed a geocodable string) should generate correct query params' do
+    GCoder::Geocoder::Request.new('queen and spadina').tap do |req|
+      req.params[:latlng].must_be_nil
+      req.params[:address].must_equal 'queen and spadina'
     end
   end
 end

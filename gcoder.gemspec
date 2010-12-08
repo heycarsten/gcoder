@@ -8,11 +8,13 @@ Gem::Specification.new do |s|
   s.authors     = ['Carsten Nielsen']
   s.email       = ['heycarsten@gmail.com']
   s.homepage    = 'http://github.com/heycarsten/gcoder'
-  s.summary     = %q{A nice library for geocoding stuff with Google Maps}
-  s.description = %q{Uses Google Maps API to geocode queries and caches them in Redis}
+  s.summary     = %q{A nice library for geocoding stuff with Google Geocoder API}
+  s.description = %q{Uses Google Geocoder API to geocode stuff and optionally caches the results somewhere}
 
   s.required_rubygems_version = '>= 1.3.6'
   s.rubyforge_project = 'gcoder'
+
+  s.add_dependency 'hashie'
 
   s.files         = `git ls-files`.split(?\n)
   s.test_files    = `git ls-files -- {test,spec}/*`.split(?\n)

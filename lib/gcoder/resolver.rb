@@ -16,17 +16,13 @@ module GCoder
 
     def geocode(query, opts = {})
       fetch([query, opts].join) do
-        Geocoder.get(query, opts)
-      end
+        Geocoder::Request.new(query, opts).get.as_mash
+      end.results
     end
 
-    def fetch(query)
+    def fetch(key)
       raise ArgumentError, 'block required' unless block_given?
-      if (resp = get(query))
-        JSON.parse(resp)
-      else
-        set(query, yield.as_json)
-      end
+      Hashie::Mash.new((val = get(key)) ? JSON.parse(val) : set(key, yield))
     end
 
     private
@@ -38,7 +34,7 @@ module GCoder
 
     def set(key, value)
       return value unless @conn
-      @conn.set(key, value)
+      @conn.set(key, value.to_json)
       value
     end
 

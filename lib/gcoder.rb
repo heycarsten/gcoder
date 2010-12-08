@@ -1,5 +1,6 @@
 require 'json'
-require 'open-uri'
+require 'hashie'
+require 'net/http'
 require 'timeout'
 require 'digest/sha1'
 
@@ -11,12 +12,14 @@ require 'gcoder/storage'
 require 'gcoder/resolver'
 
 module GCoder
+  class NoResultsError < StandardError; end
+  class OverLimitError < StandardError; end
   class GeocoderError < StandardError; end
+  class BadQueryError < StandardError; end
   class NotImplementedError < StandardError; end
   class TimeoutError < StandardError; end
 
   DEFAULT_CONFIG = {
-    :api_key        => nil,
     :timeout        => 5,
     :append         => nil,
     :region         => nil,
