@@ -1,4 +1,4 @@
-require 'json'
+require 'yajl'
 require 'hashie'
 require 'net/http'
 require 'timeout'

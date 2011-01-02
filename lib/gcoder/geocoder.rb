@@ -79,7 +79,10 @@ module GCoder
       end
 
       def http_get
-        self.class.stubs[uri] || Net::HTTP.get(HOST, path)
+        Yajl::Parser.parse(
+          (self.class.stubs[uri] || Net::HTTP.get(HOST, path)),
+          :symbolize_keys => true
+        )
       end
 
       def latlng
@@ -97,36 +100,35 @@ module GCoder
 
 
     class Response
-      attr_reader :body, :uri
+      attr_reader :uri, :data
 
-      def initialize(uri, body)
-        @uri      = uri
-        @body     = body
-        @response = Hashie::Mash.new(JSON.parse(@body))
+      def initialize(uri, data)
+        @uri  = uri
+        @data = Hashie::Mash.new(data)
         validate_status!
       end
 
       def as_mash
-        @response
+        data
       end
 
       private
 
       def validate_status!
-        case @response.status
+        case data.status
         when 'OK'
           # All is well!
         when 'ZERO_RESULTS'
-          raise NoResultsError, "Geocoding API returned no results: (#{@uri})"
+          raise NoResultsError, "Geocoding API returned no results: (#{uri})"
         when 'OVER_QUERY_LIMIT'
           raise OverLimitError, 'Rate limit for Geocoding API exceeded!'
         when 'REQUEST_DENIED'
-          raise GeocoderError, "Request denied by the Geocoding API: (#{@uri})"
+          raise GeocoderError, "Request denied by the Geocoding API: (#{uri})"
         when 'INVALID_REQUEST'
-          raise GeocoderError, "An invalid request was made: (#{@uri})"
+          raise GeocoderError, "An invalid request was made: (#{uri})"
         else
           raise GeocoderError, 'No status in Geocoding API response: ' \
-          "(#{@uri})\n\n#{@body}"
+          "(#{uri})\n\n#{data.inspect}"
         end
       end
     end

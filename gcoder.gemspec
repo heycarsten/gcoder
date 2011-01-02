@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project = 'gcoder'
 
   s.add_dependency 'hashie'
+  s.add_dependency 'yajl-ruby'
 
   s.files         = `git ls-files`.split(?\n)
   s.test_files    = `git ls-files -- {test,spec}/*`.split(?\n)

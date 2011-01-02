@@ -15,14 +15,16 @@ module GCoder
     end
 
     def geocode(query, opts = {})
-      fetch([query, opts].join) do
+      fetch([query, opts].join) {
         Geocoder::Request.new(query, opts).get.as_mash
-      end.results
+      }.results
     end
 
     def fetch(key)
       raise ArgumentError, 'block required' unless block_given?
-      Hashie::Mash.new((val = get(key)) ? JSON.parse(val) : set(key, yield))
+      Hashie::Mash.new(
+        (val = get(key)) ? Yajl::Parser.parse(val) : set(key, yield)
+      )
     end
 
     private
@@ -34,7 +36,7 @@ module GCoder
 
     def set(key, value)
       return value unless @conn
-      @conn.set(key, value.to_json)
+      @conn.set(key, Yajl::Encoder.encode(value))
       value
     end
 
