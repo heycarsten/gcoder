@@ -35,6 +35,7 @@ module GCoder
         p[:language] = @config[:language] if @config[:language]
         p[:region]   = @config[:region]   if @config[:region]
         p[:bounds]   = bounds             if @config[:bounds]
+        p[:client]   = @config[:client]   if @config[:client]
         p
       end
 
