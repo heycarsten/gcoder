@@ -137,6 +137,11 @@ Now we can use our adapter as a caching layer by specifying it like this:
         :table_name => :locations
       }
 
+## Authors
+
+ * Carsten Nielsen
+ * Christos Pappas (Added support for Google Maps API Premier)
+
 ## Notes
 
 Tested with Ruby 1.9.2 (MRI) and nothing else, fork it. See
