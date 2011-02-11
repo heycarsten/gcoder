@@ -100,8 +100,38 @@ module GCoder
       end
     end
 
+    class RailsCacheAdapter < Adapter
+      def connect
+        @cache = Rails.cache
+        @keyspace = "#{config[:keyspace] || 'gcoder'}:"
+      end
+
+      def clear
+        @cache.keys(@keyspace + '*').each { |key| @cache.del(key) }
+      end
+
+      def get(key)
+        @cache.read(keyns(key))
+      end
+
+      def set(key, value)
+        if (ttl = config[:key_ttl])
+          @cache.write(keyns(key), nval(value), :expires_in => ttl)
+        else
+          @cache.write(keyns(key), nval(value))
+        end
+      end
+
+      private
+
+      def keyns(key)
+        "#{@keyspace}#{nkey(key)}"
+      end
+    end
+
     register :heap,  HeapAdapter
     register :redis, RedisAdapter
+    register :rails_cache,  RailsCacheAdapter
 
   end
 end
