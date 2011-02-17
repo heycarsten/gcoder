@@ -49,7 +49,8 @@ More info [here](http://code.google.com/apis/maps/documentation/geocoding/#Viewp
 
 ### `:client`
 
-To access the special features of Google Maps API Premier, you must provide a client ID. All client IDs begin with a gme- prefix.
+To access the special features of Google Maps API Premier, you must provide a
+client ID. All client IDs begin with a gme- prefix.
 
 ### `:storage`
 
@@ -71,6 +72,7 @@ disable caching of results.
  * `:storage => nil` - Disable caching (default.)
  * `:storage => :heap` - Saves cached values in an in-memory Hash.
  * `:storage => :redis` - Saves cached values within Redis.
+ * `:storage => :rails_cache` - Saves cached values via Rails's cache interface.
 
 ### Adapter Configuration
 
@@ -144,7 +146,8 @@ Now we can use our adapter as a caching layer by specifying it like this:
 ## Authors
 
  * Carsten Nielsen
- * Christos Pappas (Added support for Google Maps API Premier)
+ * Christos Pappas (Added support for Google Maps API Premier and Rails.cache
+   adapter.)
 
 ## Notes
 
