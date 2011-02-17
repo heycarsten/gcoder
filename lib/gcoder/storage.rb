@@ -50,7 +50,6 @@ module GCoder
       end
     end
 
-
     class HeapAdapter < Adapter
       def connect
         @heap = {}
@@ -68,7 +67,6 @@ module GCoder
         @heap[nkey(key)] = nval(value)
       end
     end
-
 
     class RedisAdapter < Adapter
       def connect
@@ -131,7 +129,7 @@ module GCoder
 
     register :heap,  HeapAdapter
     register :redis, RedisAdapter
-    register :rails_cache,  RailsCacheAdapter
+    register :rails_cache, RailsCacheAdapter
 
   end
 end
