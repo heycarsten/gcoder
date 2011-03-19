@@ -5,14 +5,9 @@ module GCoder
     PATH = '/maps/api/geocode/json'
 
     class Request
-      def self.u(string)
-        string.to_s.gsub(/([^ a-zA-Z0-9_.-]+)/n) {
-          '%' + $1.unpack('H2' * $1.size).join('%').upcase
-        }.tr(' ', '+')
-      end
 
       def self.to_query(params)
-        params.map { |key, val| "#{u key}=#{u val}" }.join('&')
+        URI.escape(params.map { |key, val| "#{key}=#{val}" }.join('&'))
       end
 
       def self.stubs

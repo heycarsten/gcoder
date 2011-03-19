@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'spec_helper'
 
 describe GCoder::Geocoder::Request do
@@ -23,12 +24,18 @@ describe GCoder::Geocoder::Request do
   end
 
   it 'should URI encode a string' do
-    GCoder::Geocoder::Request.u('hello world').must_equal 'hello+world'
+    q = GCoder::Geocoder::Request.to_query(:q => 'hello world', :a => 'test')
+    q.must_equal 'q=hello%20world&a=test'
+  end
+
+  it 'should URI encode a UTF-8 string' do
+    q = GCoder::Geocoder::Request.to_query(:q => 'मुंबई', :a => 'test')
+    q.must_equal 'q=%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%AC%E0%A4%88&a=test'
   end
 
   it 'should create a query string' do
     q = GCoder::Geocoder::Request.to_query(:q => 'hello world', :a => 'test')
-    q.must_equal 'q=hello+world&a=test'
+    q.must_equal 'q=hello%20world&a=test'
   end
 
   it '(when passed a bounds option) should generate correct query params' do
@@ -50,4 +57,5 @@ describe GCoder::Geocoder::Request do
       req.params[:address].must_equal 'queen and spadina'
     end
   end
+  
 end

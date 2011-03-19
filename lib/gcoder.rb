@@ -1,6 +1,7 @@
 require 'yajl'
 require 'hashie'
 require 'net/http'
+require 'uri'
 require 'timeout'
 require 'digest/sha1'
 
