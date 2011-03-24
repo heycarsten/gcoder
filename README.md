@@ -52,6 +52,11 @@ More info [here](http://code.google.com/apis/maps/documentation/geocoding/#Viewp
 To access the special features of Google Maps API Premier, you must provide a
 client ID. All client IDs begin with a gme- prefix.
 
+### `:key`
+
+To access the special features of Google Maps API Premier, you must provide a
+signing key in addition to the client ID.
+
 ### `:storage`
 
 Defines the storage adapter to use for caching results from the geocoder to

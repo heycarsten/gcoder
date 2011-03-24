@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'hashie'
   s.add_dependency 'yajl-ruby'
+  s.add_dependency 'ruby-hmac'
 
   s.files         = `git ls-files`.split(?\n)
   s.test_files    = `git ls-files -- {test,spec}/*`.split(?\n)

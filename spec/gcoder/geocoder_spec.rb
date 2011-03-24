@@ -58,4 +58,9 @@ describe GCoder::Geocoder::Request do
     end
   end
   
+  it "(when passed a premier client and key) should generate correct query params" do
+    q = GCoder::Geocoder::Request.new('los angeles', :client => "gme-test", :key => "zNf23lb-YIoD4kEFN34C6324cww=").path
+    q.must_equal '/maps/api/geocode/json?sensor=false&address=los%20angeles&client=gme-test&signature=p0EiRD298eLhlGTqlBA5RKxv448='
+  end
+  
 end

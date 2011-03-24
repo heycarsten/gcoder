@@ -2,8 +2,11 @@ require 'yajl'
 require 'hashie'
 require 'net/http'
 require 'uri'
+require 'base64'
 require 'timeout'
 require 'digest/sha1'
+require 'hmac'
+require 'hmac-sha1'
 
 $:.unshift(File.dirname(__FILE__))
 
@@ -25,6 +28,8 @@ module GCoder
     :append         => nil,
     :region         => nil,
     :bounds         => nil,
+    :client         => nil,
+    :key            => nil,
     :storage        => nil,
     :storage_config => nil
   }.freeze
