@@ -5,14 +5,9 @@ module GCoder
     PATH = '/maps/api/geocode/json'
 
     class Request
-      def self.u(string)
-        string.to_s.gsub(/([^ a-zA-Z0-9_.-]+)/n) {
-          '%' + $1.unpack('H2' * $1.size).join('%').upcase
-        }.tr(' ', '+')
-      end
 
       def self.to_query(params)
-        params.map { |key, val| "#{u key}=#{u val}" }.join('&')
+        URI.escape(params.map { |key, val| "#{key}=#{val}" }.join('&'))
       end
 
       def self.stubs
@@ -30,17 +25,17 @@ module GCoder
 
       def params
         p = { :sensor => 'false' }
-        p[:address]  = address            if @address
-        p[:latlng]   = latlng             if @latlng
-        p[:language] = @config[:language] if @config[:language]
-        p[:region]   = @config[:region]   if @config[:region]
-        p[:bounds]   = bounds             if @config[:bounds]
-        p[:client]   = @config[:client]   if @config[:client]
+        p[:address]   = address             if @address
+        p[:latlng]    = latlng              if @latlng
+        p[:language]  = @config[:language]  if @config[:language]
+        p[:region]    = @config[:region]    if @config[:region]
+        p[:bounds]    = bounds              if @config[:bounds]
+        p[:client]    = @config[:client]    if @config[:client]
         p
       end
 
       def path
-        "#{PATH}?#{self.class.to_query(params)}"
+        "#{PATH}?#{self.class.to_query(params)}#{"&signature=#{sign_key(@config[:key])}" if @config[:key]}"
       end
 
       def uri
@@ -97,8 +92,23 @@ module GCoder
       def address
         @config[:append] ? "#{@address} #{@config[:append]}" : @address
       end
-    end
+      
+      def url_safe_base64_decode(string)
+        return Base64.decode64(string.tr('-_','+/')).gsub(/\n/,'')
+      end
 
+      def url_safe_base64_encode(raw)
+        return Base64.encode64(raw).tr('+/','-_').gsub(/\n/,'')
+      end
+      
+      def sign_key(key)
+        sha1 = HMAC::SHA1.new(url_safe_base64_decode(key))
+        sha1 << "#{PATH}?#{self.class.to_query(params)}"
+        raw_signature = sha1.digest()
+        
+        url_safe_base64_encode(raw_signature)  
+      end
+    end
 
     class Response
       attr_reader :uri, :data
