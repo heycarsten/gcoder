@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.summary     = %q{A nice library for geocoding stuff with Google Maps API V3}
   s.description = %q{Uses Google Maps Geocoding API (V3) to geocode stuff and optionally caches the results somewhere.}
 
-  s.required_rubygems_version = '>= 1.3.6'
+  s.required_rubygems_version = '>= 1.8.5'
   s.rubyforge_project = 'gcoder'
 
   s.add_dependency 'hashie'
