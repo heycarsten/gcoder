@@ -4,14 +4,16 @@ GCoder geocodes stuff using the Google Geocoding API (V3) and caches the
 results somewhere, if you want. _(Need something more bulldozer-like? Check out
 [Geokit](http://github.com/andre/geokit-gem).)_
 
-    # Bon Usage
+```ruby
+# Bon Usage
 
-    require 'gcoder'
+require 'gcoder'
 
-    G = GCoder.connect(:storage => :heap)
+G = GCoder.connect(:storage => :heap)
 
-    G['dundas and sorauren', :region => :ca] # ... it geocodes!
-    G[[41.87, -74.16]]                       # ... and reverse-geocodes!
+G['dundas and sorauren', :region => :ca] # ... it geocodes!
+G[[41.87, -74.16]]                       # ... and reverse-geocodes!
+```
 
 The returned value is the 'results' portion of the Google Geocoding API
 [response](http://code.google.com/apis/maps/documentation/geocoding/#JSON).
@@ -43,7 +45,9 @@ of two latitude / longitude pairs. The first describes the Northeast corner of
 the box and the second describes the Southwest corner of the box. Here is an
 example input:
 
-    [[50.09, -94.88], [41.87, -74.16]]
+```ruby
+[[50.09, -94.88], [41.87, -74.16]]
+```
 
 More info [here](http://code.google.com/apis/maps/documentation/geocoding/#Viewports).
 
@@ -102,53 +106,57 @@ Making your own adapter is pretty easy. Your adapter needs to respond to four
 instance methods: `connect`, `set`, `get`, and `clear`. Let's make an adapter
 for Sequel.
 
-    class SequelAdapter < GCoder::Storage::Adapter
-      def connect
-        @db = Sequel.connect(config[:connection])
-        @table_name = (config[:table_name] || :gcoder_results)
-      end
+```ruby
+class SequelAdapter < GCoder::Storage::Adapter
+  def connect
+    @db = Sequel.connect(config[:connection])
+    @table_name = (config[:table_name] || :gcoder_results)
+  end
 
-      # The methods `nkey` and `nval` are used to "normalize" keys and values,
-      # respectively. You are encouraged to use them.
-      def set(key, value)
-        if get(key)
-          table.filter(:id => nkey(key)).update(:value => nval(value))
-        else
-          table.insert(:id => nkey(key), :value => nval(value))
-        end
-      end
-
-      def get(key)
-        if (row = table.filter(:id => nkey(key)).first)
-          row[:value]
-        else
-          nil
-        end
-      end
-
-      def clear
-        table.delete_all
-      end
-
-      private
-
-      def table
-        @db[@table_name]
-      end
+  # The methods `nkey` and `nval` are used to "normalize" keys and values,
+  # respectively. You are encouraged to use them.
+  def set(key, value)
+    if get(key)
+      table.filter(:id => nkey(key)).update(:value => nval(value))
+    else
+      table.insert(:id => nkey(key), :value => nval(value))
     end
+  end
 
-    GCoder::Storage.register(:sequel, SequelAdapter)
+  def get(key)
+    if (row = table.filter(:id => nkey(key)).first)
+      row[:value]
+    else
+      nil
+    end
+  end
+
+  def clear
+    table.delete_all
+  end
+
+  private
+
+  def table
+    @db[@table_name]
+  end
+end
+
+GCoder::Storage.register(:sequel, SequelAdapter)
+```
 
 Now we can use our adapter as a caching layer by specifying it like this:
 
-    G = GCoder.connect \
-      :storage => :sequel,
-      :storage_config => {
-        :connection => 'sqlite://geo.db',
-        :table_name => :locations
-      }
+```ruby
+G = GCoder.connect \
+  :storage => :sequel,
+  :storage_config => {
+    :connection => 'sqlite://geo.db',
+    :table_name => :locations
+  }
+```
 
-## Authors
+## Contributors
 
  * Carsten Nielsen
  * Christos Pappas (Added support for Google Maps API Premier and Rails.cache
