@@ -1,18 +1,18 @@
 ---
 - :file: 1.json
-  :uri: http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=queen+and+spadina&region=ca
+  :uri: http://maps.googleapis.com/maps/api/geocode/json?address=queen+and+spadina&region=ca&sensor=false
 
 - :file: 2.json
-  :uri: http://maps.googleapis.com/maps/api/geocode/json?sensor=false&latlng=43.6487606%2C-79.3962415
+  :uri: http://maps.googleapis.com/maps/api/geocode/json?latlng=43.6487606%2C-79.3962415&sensor=false
 
 - :file: 3.json
-  :uri: http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=noresults
+  :uri: http://maps.googleapis.com/maps/api/geocode/json?address=noresults&sensor=false
 
 - :file: 4.json
-  :uri: http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=denied
+  :uri: http://maps.googleapis.com/maps/api/geocode/json?address=denied&sensor=false
 
 - :file: 5.json
-  :uri: http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=overlimit
+  :uri: http://maps.googleapis.com/maps/api/geocode/json?address=overlimit&sensor=false
 
 - :file: 6.json
-  :uri: http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=invalid
+  :uri: http://maps.googleapis.com/maps/api/geocode/json?address=invalid&sensor=false

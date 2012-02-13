@@ -7,7 +7,7 @@ module GCoder
     class Request
 
       def self.to_query(params)
-        params.map { |key, val| "#{CGI.escape(key.to_s)}=#{CGI.escape(val.to_s)}" }.join('&')
+        params.sort_by { |key, val| key.to_s }.map { |key, val| "#{CGI.escape(key.to_s)}=#{CGI.escape(val.to_s)}" }.join('&')
       end
 
       def self.stubs
