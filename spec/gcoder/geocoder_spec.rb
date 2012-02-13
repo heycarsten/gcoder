@@ -25,7 +25,12 @@ describe GCoder::Geocoder::Request do
 
   it 'should URI encode a string' do
     q = GCoder::Geocoder::Request.to_query(:q => 'hello world', :a => 'test')
-    q.must_equal 'q=hello%20world&a=test'
+    q.must_equal 'q=hello+world&a=test'
+  end
+
+  it 'should URI encode a string with ampersands' do
+    q = GCoder::Geocoder::Request.to_query(:q => 'hello & world', :a => 'test')
+    q.must_equal 'q=hello+%26+world&a=test'
   end
 
   it 'should URI encode a UTF-8 string' do
@@ -35,7 +40,7 @@ describe GCoder::Geocoder::Request do
 
   it 'should create a query string' do
     q = GCoder::Geocoder::Request.to_query(:q => 'hello world', :a => 'test')
-    q.must_equal 'q=hello%20world&a=test'
+    q.must_equal 'q=hello+world&a=test'
   end
 
   it '(when passed a bounds option) should generate correct query params' do
@@ -60,7 +65,7 @@ describe GCoder::Geocoder::Request do
   
   it "(when passed a premier client and key) should generate correct query params" do
     q = GCoder::Geocoder::Request.new('los angeles', :client => "gme-test", :key => "zNf23lb-YIoD4kEFN34C6324cww=").path
-    q.must_equal '/maps/api/geocode/json?sensor=false&address=los%20angeles&client=gme-test&signature=p0EiRD298eLhlGTqlBA5RKxv448='
+    q.must_equal '/maps/api/geocode/json?sensor=false&address=los+angeles&client=gme-test&signature=owxOUlItGsYUp-iEPw6n1S06TSc='
   end
   
 end
