@@ -161,9 +161,4 @@ G = GCoder.connect \
  * Carsten Nielsen
  * Christos Pappas (Added support for Google Maps API Premier and Rails.cache
    adapter.)
-
-## Notes
-
-Tested with Ruby 1.9.2 (MRI) and nothing else, fork it. See
-[LICENSE](http://github.com/heycarsten/gcoder/blob/master/LICENSE) for details
-about that jazz.
+ * [GUI](http://github.com/GUI) (Ruby 1.8.7 compatibility, URI encoding fixes.)
