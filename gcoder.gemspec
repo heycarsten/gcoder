@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.require_paths     = ['lib']
 
   s.add_dependency             'hashie'
-  s.add_dependency             'yajl-ruby'
+  s.add_dependency             'multi_json'
   s.add_dependency             'ruby-hmac'
   s.add_development_dependency 'bundler', '>= 1.0.14'
   s.add_development_dependency 'minitest'

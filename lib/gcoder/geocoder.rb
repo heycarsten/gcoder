@@ -78,7 +78,7 @@ module GCoder
       end
 
       def http_get
-        Yajl::Parser.parse(
+        MultiJson.load(
           (self.class.stubs[uri] || Net::HTTP.get(HOST, path)),
           :symbolize_keys => true
         )
