@@ -16,12 +16,13 @@ require 'gcoder/storage'
 require 'gcoder/resolver'
 
 module GCoder
-  class NoResultsError < StandardError; end
-  class OverLimitError < StandardError; end
-  class GeocoderError < StandardError; end
-  class BadQueryError < StandardError; end
-  class NotImplementedError < StandardError; end
-  class TimeoutError < StandardError; end
+  class Error < StandardError; end
+  class NoResultsError < Error; end
+  class OverLimitError < Error; end
+  class GeocoderError < Error; end
+  class BadQueryError < Error; end
+  class NotImplementedError < Error; end
+  class TimeoutError < Error; end
 
   DEFAULT_CONFIG = {
     :timeout        => 5,
