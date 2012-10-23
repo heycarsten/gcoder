@@ -23,7 +23,7 @@ module GCoder
     def fetch(key)
       raise ArgumentError, 'block required' unless block_given?
       Hashie::Mash.new(
-        (val = get(key)) ? Yajl::Parser.parse(val) : set(key, yield)
+        (val = get(key)) ? MultiJson.load(val) : set(key, yield)
       )
     end
 
@@ -36,7 +36,7 @@ module GCoder
 
     def set(key, value)
       return value unless @conn
-      @conn.set(key, Yajl::Encoder.encode(value))
+      @conn.set(key, MultiJson.dump(value))
       value
     end
 

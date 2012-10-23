@@ -1,4 +1,4 @@
-require 'yajl'
+require 'multi_json'
 require 'hashie'
 require 'net/http'
 require 'cgi'
