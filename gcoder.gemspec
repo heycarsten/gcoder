@@ -10,14 +10,15 @@ Gem::Specification.new do |s|
   s.email             = 'heycarsten@gmail.com'
   s.summary           = 'A nice library for geocoding stuff with Google Maps API V3'
   s.rubyforge_project = 'gcoder'
-  s.files             = `git ls-files`.split(?\n)
-  s.test_files        = `git ls-files -- {test,spec}/*`.split(?\n)
+  s.files             = `git ls-files`.split("\n")
+  s.test_files        = `git ls-files -- {test,spec}/*`.split("\n")
   s.require_paths     = ['lib']
 
   s.add_dependency             'hashie'
   s.add_dependency             'yajl-ruby'
   s.add_dependency             'ruby-hmac'
   s.add_development_dependency 'bundler', '>= 1.0.14'
+  s.add_development_dependency 'minitest'
   s.add_development_dependency 'redis'
 
   s.description = <<-END

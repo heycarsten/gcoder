@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe GCoder::Storage::Adapter do
   it 'shoyld raise an error if instantiated directly' do
-    -> { GCoder::Storage::Adapter.new }.must_raise GCoder::NotImplementedError
+    lambda { GCoder::Storage::Adapter.new }.must_raise GCoder::NotImplementedError
   end
 end
 

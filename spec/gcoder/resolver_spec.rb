@@ -22,26 +22,26 @@ describe 'GCoder::Resolver (with caching)' do
   end
 
   it 'should raise an error for queries with no results' do
-    -> { @g['noresults', :region => nil] }.must_raise GCoder::NoResultsError
+    lambda { @g.geocode('noresults', :region => nil) }.must_raise GCoder::NoResultsError
   end
 
   it 'should raise an error for denied queries' do
-    -> { @g['denied', :region => nil] }.must_raise GCoder::GeocoderError
+    lambda { @g.geocode('denied', :region => nil) }.must_raise GCoder::GeocoderError
   end
 
   it 'should raise an error when the query limit is exceeded' do
-    -> { @g['overlimit', :region => nil] }.must_raise GCoder::OverLimitError
+    lambda { @g.geocode('overlimit', :region => nil) }.must_raise GCoder::OverLimitError
   end
 
   it 'should raise an error when the request is invalid' do
-    -> { @g['denied', :region => nil] }.must_raise GCoder::GeocoderError
+    lambda { @g.geocode('denied', :region => nil) }.must_raise GCoder::GeocoderError
   end
 end
 
 describe 'GCoder::Resolver (without caching)' do
   it 'should resolve queries' do
     g = GCoder.connect(:storage => nil)
-    r = g['queen and spadina', :region => :ca]
+    r = g.geocode('queen and spadina', :region => :ca)
     r.must_be_instance_of Array
   end
 end
