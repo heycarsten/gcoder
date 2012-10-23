@@ -26,12 +26,12 @@ module GCoder
 
       def params
         p = { :sensor => 'false' }
-        p[:address]   = address            if @address
-        p[:latlng]    = latlng             if @latlng
-        p[:language]  = @config[:language] if @config[:language]
-        p[:region]    = @config[:region]   if @config[:region]
-        p[:bounds]    = bounds             if @config[:bounds]
-        p[:client]    = @config[:client]   if @config[:client]
+        p[:address]  = address            if @address
+        p[:latlng]   = latlng             if @latlng
+        p[:language] = @config[:language] if @config[:language]
+        p[:region]   = @config[:region]   if @config[:region]
+        p[:bounds]   = bounds             if @config[:bounds]
+        p[:client]   = @config[:client]   if @config[:client]
         p
       end
 

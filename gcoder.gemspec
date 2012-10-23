@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.platform          = Gem::Platform::RUBY
   s.date              = Date.today.strftime('%F')
   s.homepage          = 'http://github.com/heycarsten/gcoder'
-  s.authors           = ['Carsten Nielsen', 'Christos Pappas']
+  s.authors           = ['Carsten Nielsen', 'Christos Pappas', 'GUI']
   s.email             = 'heycarsten@gmail.com'
   s.summary           = 'A nice library for geocoding stuff with Google Maps API V3'
   s.rubyforge_project = 'gcoder'
@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency             'hashie'
   s.add_dependency             'multi_json'
   s.add_dependency             'ruby-hmac'
-  s.add_development_dependency 'bundler', '>= 1.0.14'
+  s.add_development_dependency 'bundler'
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'redis'
 

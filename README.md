@@ -158,7 +158,7 @@ G = GCoder.connect \
 
 ## Contributors
 
- * Carsten Nielsen
- * Christos Pappas (Added support for Google Maps API Premier and Rails.cache
-   adapter.)
- * [GUI](http://github.com/GUI) (Ruby 1.8.7 compatibility, URI encoding fixes.)
+ * [Carsten Nielsen](http://github.com/heycarsten)
+ * [Christos Pappas](http://github.com/christospappas) - Added support for
+   Google Maps API Premier and Rails.cache adapter.
+ * [GUI](http://github.com/GUI) - Ruby 1.8.7 compatibility, URI encoding fixes.
