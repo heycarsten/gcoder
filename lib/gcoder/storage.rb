@@ -71,7 +71,7 @@ module GCoder
     class RedisAdapter < Adapter
       def connect
         require 'redis'
-        @rdb = Redis.connect(*[config[:connection]].compact)
+        @rdb      = Redis.connect(url: config[:url] || 'redis://127.0.0.1/0')
         @keyspace = "#{config[:keyspace] || 'gcoder'}:"
       end
 
